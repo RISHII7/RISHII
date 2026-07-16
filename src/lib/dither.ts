@@ -1,7 +1,7 @@
 /**
- * Canvas dithering helpers for the hero portrait and background field.
- * Everything renders at a deliberately low resolution and is upscaled with
- * `image-rendering: pixelated` for the dot-matrix look.
+ * Canvas dithering helpers for the hero portrait/field and About halftone.
+ * Hero canvases render at a deliberately low resolution and are upscaled
+ * with `image-rendering: pixelated` for the dot-matrix look.
  */
 
 const BAYER_4 = [
@@ -10,6 +10,13 @@ const BAYER_4 = [
   [3, 11, 1, 9],
   [15, 7, 13, 5],
 ];
+
+export interface CropRect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -20,80 +27,119 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/**
- * Draws `img` onto `canvas` as an ordered-dither monochrome portrait.
- * The image is anchored to the right edge, covering the full height.
- */
-export function drawDitheredPortrait(
-  canvas: HTMLCanvasElement,
-  img: HTMLImageElement,
-  opts: { width?: number; levels?: [string, string, string] } = {},
-): void {
-  const w = opts.width ?? 240;
+/** Canvas backing resolution: fixed low width, height follows CSS aspect. */
+function lowRes(canvas: HTMLCanvasElement, w = 240): { w: number; h: number } {
   const aspect = canvas.clientHeight > 0 ? canvas.clientWidth / canvas.clientHeight : 16 / 9;
   const h = Math.max(1, Math.round(w / aspect));
   canvas.width = w;
   canvas.height = h;
+  return { w, h };
+}
 
+/**
+ * Ordered-dither monochrome portrait from a face-focused crop of `img`,
+ * fit to the full canvas height and centered on `anchorX` (canvas-width
+ * fraction). Edges dissolve into the background field.
+ */
+export function drawDitheredPortrait(
+  canvas: HTMLCanvasElement,
+  img: HTMLImageElement,
+  crop: CropRect,
+  anchorX = 0.72,
+): void {
+  const { w, h } = lowRes(canvas);
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  // cover-fit the portrait into the right ~55% of the frame
-  const zoneW = Math.round(w * 0.55);
-  const zoneX = w - zoneW;
-  const scale = Math.max(zoneW / img.width, h / img.height);
-  const dw = img.width * scale;
-  const dh = img.height * scale;
-  const dx = zoneX + (zoneW - dw) / 2;
-  const dy = (h - dh) / 2;
+  const sx = crop.x * img.width;
+  const sy = crop.y * img.height;
+  const sw = crop.w * img.width;
+  const sh = crop.h * img.height;
+
+  // fit crop to full canvas height
+  const scale = h / sh;
+  const dw = Math.round(sw * scale);
+  const dx = Math.round(w * anchorX - dw / 2);
 
   const off = document.createElement("canvas");
   off.width = w;
   off.height = h;
   const octx = off.getContext("2d");
   if (!octx) return;
-  octx.drawImage(img, dx, dy, dw, dh);
+  octx.drawImage(img, sx, sy, sw, sh, dx, 0, dw, h);
 
-  const data = octx.getImageData(0, 0, w, h);
-  const px = data.data;
+  const px = octx.getImageData(0, 0, w, h).data;
   ctx.clearRect(0, 0, w, h);
 
-  const [dark, mid, light] = opts.levels ?? ["#2a2a28", "#6b6a66", "#b9b6b0"];
+  const light = "#a8a5a0";
+  const mid = "#6b6a66";
+  const dark = "#3a3a38";
+  const fadeBand = Math.max(6, Math.round(dw * 0.22));
 
   for (let y = 0; y < h; y++) {
-    for (let x = zoneX; x < w; x++) {
+    for (let x = Math.max(0, dx); x < Math.min(w, dx + dw); x++) {
       const i = (y * w + x) * 4;
-      const a = px[i + 3];
-      if (a < 40) continue;
+      if (px[i + 3] < 40) continue;
       const lum = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      // dissolve toward both crop edges
+      const edge = Math.min(x - dx, dx + dw - x);
+      const fade = Math.min(1, edge / fadeBand);
       const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
-      // edge fade so the portrait dissolves into the background
-      const fade = Math.min(1, (x - zoneX) / (zoneW * 0.35));
-      if (lum * fade < threshold * 0.55) continue;
-      ctx.fillStyle = lum > 0.72 ? light : lum > 0.45 ? mid : dark;
+      if (lum * fade < threshold) continue;
+      ctx.fillStyle = lum > 0.72 ? light : lum > 0.42 ? mid : dark;
       ctx.fillRect(x, y, 1, 1);
     }
   }
 }
 
-/** Sparse random dot field behind the portrait — redrawn for a soft flicker. */
-export function drawDitherField(canvas: HTMLCanvasElement, density = 0.045): void {
-  const w = 240;
-  const aspect = canvas.clientHeight > 0 ? canvas.clientWidth / canvas.clientHeight : 16 / 9;
-  const h = Math.max(1, Math.round(w / aspect));
-  canvas.width = w;
-  canvas.height = h;
+/** Static noise-field values in [0,1), reusable across frames. */
+export function makeFieldBase(w: number, h: number): Float32Array {
+  const base = new Float32Array(w * h);
+  for (let i = 0; i < base.length; i++) base[i] = Math.random();
+  return base;
+}
 
+/**
+ * Sparse dot field with a soft dithered blob that follows the cursor
+ * (`bx`/`by` in canvas coords; pass -1 to hide).
+ */
+export function drawDitherField(
+  canvas: HTMLCanvasElement,
+  base: Float32Array,
+  bx = -1,
+  by = -1,
+): void {
+  const w = canvas.width;
+  const h = canvas.height;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.clearRect(0, 0, w, h);
 
+  const blobR = Math.max(14, Math.round(w * 0.085));
+
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      if (Math.random() > density) continue;
-      const v = Math.random();
-      ctx.fillStyle = v > 0.85 ? "#4a4a48" : v > 0.5 ? "#2c2c2a" : "#1d1d1c";
-      ctx.fillRect(x, y, 1, 1);
+      const v = base[y * w + x];
+      let boost = 0;
+      if (bx >= 0) {
+        const d = Math.hypot(x - bx, y - by);
+        if (d < blobR) {
+          const t = 1 - d / blobR;
+          boost = t * t * 0.85;
+        }
+      }
+      if (boost > 0) {
+        const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
+        if (boost > threshold) {
+          ctx.fillStyle = v > 0.6 ? "#8a8a86" : "#71716d";
+          ctx.fillRect(x, y, 1, 1);
+          continue;
+        }
+      }
+      if (v > 0.955) {
+        ctx.fillStyle = v > 0.985 ? "#4a4a48" : "#242422";
+        ctx.fillRect(x, y, 1, 1);
+      }
     }
   }
 }

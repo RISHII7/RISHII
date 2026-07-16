@@ -11,11 +11,11 @@ export function StatusBar({ active }: { active: string }) {
   const clock = useClock();
   const { accent, cycle } = useAccent();
 
-  const current = nav.find((n) => n.href.slice(1) === active) ?? nav[0];
-  const crsr =
-    typeof window === "undefined" || window.innerWidth === 0
-      ? "0.0"
-      : (cursor.x / window.innerWidth).toFixed(1);
+  const current =
+    active === "top" || active === ""
+      ? { number: "00", label: "INTRO" }
+      : (nav.find((n) => n.href.slice(1) === active) ?? { number: "00", label: "INTRO" });
+  const crsr = `${Math.round(cursor.x)}.${Math.round(cursor.y)}`;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-muted/15 bg-ink">

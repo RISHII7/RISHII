@@ -6,6 +6,21 @@ export const hero = {
   stat: "2 YEARS SHIPPING SAAS",
   location: "BASED IN PUNE / NOIDA, INDIA",
   availability: "OPEN TO REMOTE WORK",
+  /**
+   * Face-focused crop of the portrait photo (fractions of the source image),
+   * used by the hero dither canvas so the subject reads like a headshot.
+   */
+  photoCrop: { x: 0.16, y: 0.03, w: 0.4, h: 0.42 },
+} as const;
+
+export const preloader = {
+  lines: [
+    "RUSHIKESH PALANDE",
+    "PORTFOLIO — 2026",
+    "FULL-STACK · AI · SAAS",
+    "PUNE / NOIDA → REMOTE",
+  ],
+  skipHint: "PRESS ANY KEY TO SKIP",
 } as const;
 
 export const about = {

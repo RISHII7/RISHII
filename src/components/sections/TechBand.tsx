@@ -7,7 +7,7 @@ export function TechBand() {
     <>
       {techBand.slugs.map((slug) => (
         <span key={slug} className="flex items-center gap-[clamp(2rem,4vw,4rem)]">
-          <BrandIcon slug={slug} className="h-[clamp(2rem,4vw,3.25rem)] w-auto text-ink/85" />
+          <BrandIcon slug={slug} className="h-[clamp(2.5rem,5vw,4.5rem)] w-auto text-ink/85" />
           <span aria-hidden="true" className="block size-2 rotate-45 bg-ink/50" />
         </span>
       ))}
