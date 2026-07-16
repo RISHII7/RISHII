@@ -1,4 +1,5 @@
 export interface MoreProject {
+  number: string;
   title: string;
   description: string;
   tags: string[];
@@ -7,7 +8,8 @@ export interface MoreProject {
 
 // PLACEHOLDER — awaiting user's project list (6 slots).
 export const moreProjects: MoreProject[] = Array.from({ length: 6 }, (_, i) => ({
-  title: `PROJECT ${i + 1}`,
-  description: "Awaiting your pick — this card will show a build of yours",
-  tags: ["Tech", "Stack"],
+  number: String(i + 1).padStart(3, "0"),
+  title: `PROJECT ${["ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX"][i]}`,
+  description: "Awaiting your pick — this card will show one of your builds",
+  tags: ["TECH", "STACK"],
 }));
