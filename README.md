@@ -2,7 +2,9 @@
 
 Personal portfolio of **Rushikesh Palande**, Software Engineer (Full-Stack & AI-Powered Systems).
 
-**Live:** _pending deployment_ · **Design reference:** [mauriciojuba.com](https://mauriciojuba.com/) (exact visual clone, own content)
+A dark, editorial single-page site: oversized display typography, mono microlabels, live scroll/cursor readouts, and numbered sections — built as a design system first, then composed into a page.
+
+**Live:** _pending deployment_
 
 ## Stack
 
@@ -22,9 +24,9 @@ npm run preview  # preview the build
 Full docs live in [docs/](docs/):
 
 | Doc | Purpose |
-|---|---|
+| --- | --- |
 | [01-project-plan.md](docs/01-project-plan.md) | Goals, decisions, milestones, open items |
-| [02-design-spec.md](docs/02-design-spec.md) | Extracted design tokens & structure of the reference |
+| [02-design-spec.md](docs/02-design-spec.md) | Design system — tokens, type scale, motion, structure |
 | [03-content-map.md](docs/03-content-map.md) | All site copy and its sources |
 | [04-architecture.md](docs/04-architecture.md) | Stack, folder structure, conventions |
 | [05-seo-strategy.md](docs/05-seo-strategy.md) | SEO implementation & post-deploy checklist |

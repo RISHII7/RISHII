@@ -5,18 +5,18 @@
 - **Vite 7** — build tool, dev server
 - **React 19** + **TypeScript** — UI
 - **Tailwind CSS v4** — styling via `@tailwindcss/vite` plugin (CSS-first config, no tailwind.config.js)
-- **@fontsource-variable/rubik** — self-hosted variable font (matches reference exactly)
+- **@fontsource-variable/rubik** — self-hosted variable font (no external font CDN)
 
 ## Principles
 
 1. **Content lives in `src/data/`** — every section reads typed data objects. Swapping a project = editing one file, zero component changes.
 2. **Components split by responsibility** — `layout/` (chrome), `sections/` (one per page section), `ui/` (reusable atoms).
-3. **Design tokens in CSS** — `src/styles/index.css` declares the exact extracted tokens as CSS custom properties + Tailwind `@theme`, so utilities like `text-display-xl` and `bg-ink` exist.
+3. **Design tokens in CSS** — `src/styles/index.css` declares the design-system tokens as CSS custom properties + Tailwind `@theme`, so utilities like `text-display-xl` and `bg-ink` exist.
 4. **Hooks isolate behavior** — scroll progress, cursor tracking, in-view reveals are reusable hooks, not inline effects.
 
 ## Folder structure
 
-```
+```text
 Rushikesh_Palande/
 ├── docs/                      # Project documentation (this folder)
 ├── public/
