@@ -2,6 +2,13 @@
 
 All notable project events, newest first.
 
+## 2026-07-16 (night)
+
+- Fidelity pass from a frame-by-frame study of the target experience (PR #7):
+  preloader intro (identity block, 0→100 counter, any-key skip, staggered hero
+  reveal), measured face-crop for the hero portrait, cursor-following dither
+  blob, CRSR pixel readout, 00 — INTRO label, lab VISIT row, larger band logos
+
 ## 2026-07-16 (evening)
 
 - Full site built and merged (PR #4): header/HUD chrome, hero with dithered canvas portrait + cursor-weight name, tech marquee band, featured-work sticky deck, projects/lab ledger rows, about with live halftone portrait, contact + footer; Lenis smooth scroll; reduced-motion support
