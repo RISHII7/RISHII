@@ -1,6 +1,11 @@
 import { useEffect, useRef } from "react";
 import { hero, about } from "../../data/profile";
-import { drawDitheredPortrait, drawDitherField, loadImage } from "../../lib/dither";
+import {
+  drawDitheredPortrait,
+  drawDitherField,
+  makeFieldBase,
+  loadImage,
+} from "../../lib/dither";
 
 /** Per-letter variable-weight word; letters swell toward the cursor. */
 function WeightedWord({
@@ -8,11 +13,13 @@ function WeightedWord({
   base,
   className,
   leading,
+  revealDelay,
 }: {
   word: string;
   base: number;
   className: string;
   leading: string;
+  revealDelay: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -48,7 +55,12 @@ function WeightedWord({
   }, [base]);
 
   return (
-    <span ref={ref} className={`block whitespace-nowrap ${leading}`}>
+    <span
+      ref={ref}
+      data-reveal="true"
+      style={{ transitionDelay: revealDelay }}
+      className={`block whitespace-nowrap ${leading}`}
+    >
       <span className={className}>
         <span aria-hidden="true">
           {[...word].map((c, i) => (
@@ -68,29 +80,64 @@ function WeightedWord({
   );
 }
 
-/** Low-res dithered background: noise field + portrait, pixel-upscaled. */
+/**
+ * Low-res dithered background, pixel-upscaled:
+ * a noise field with a cursor-following dither blob + the portrait.
+ */
 function HeroBackdrop() {
   const fieldRef = useRef<HTMLCanvasElement>(null);
   const portraitRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    let disposed = false;
-    let timer = 0;
-
     const field = fieldRef.current;
     const portrait = portraitRef.current;
     if (!field || !portrait) return;
 
-    const renderField = () => {
-      drawDitherField(field);
-      timer = window.setTimeout(renderField, 420);
+    let disposed = false;
+    let frame = 0;
+    let base: Float32Array | null = null;
+    // blob position in canvas coords; eased toward the cursor
+    let bx = -1;
+    let by = -1;
+    let tx = -1;
+    let ty = -1;
+
+    const sizeField = () => {
+      const aspect = field.clientHeight > 0 ? field.clientWidth / field.clientHeight : 16 / 9;
+      field.width = 240;
+      field.height = Math.max(1, Math.round(240 / aspect));
+      base = makeFieldBase(field.width, field.height);
     };
-    renderField();
+
+    const renderField = () => {
+      if (disposed || !base) return;
+      // ease the blob toward the cursor for a trailing feel
+      if (tx >= 0) {
+        bx = bx < 0 ? tx : bx + (tx - bx) * 0.14;
+        by = by < 0 ? ty : by + (ty - by) * 0.14;
+      }
+      drawDitherField(field, base, bx, by);
+      frame = requestAnimationFrame(renderField);
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const rect = field.getBoundingClientRect();
+      if (e.clientY < rect.top || e.clientY > rect.bottom) {
+        tx = -1;
+        ty = -1;
+        return;
+      }
+      tx = ((e.clientX - rect.left) / rect.width) * field.width;
+      ty = ((e.clientY - rect.top) / rect.height) * field.height;
+    };
 
     let img: HTMLImageElement | null = null;
     const renderPortrait = () => {
-      if (img && !disposed) drawDitheredPortrait(portrait, img);
+      if (img && !disposed) drawDitheredPortrait(portrait, img, hero.photoCrop);
     };
+
+    sizeField();
+    renderField();
     loadImage(about.photo)
       .then((loaded) => {
         img = loaded;
@@ -100,11 +147,17 @@ function HeroBackdrop() {
         /* portrait is decorative — the field alone still reads correctly */
       });
 
-    window.addEventListener("resize", renderPortrait);
+    const onResize = () => {
+      sizeField();
+      renderPortrait();
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("mousemove", onMove, { passive: true });
     return () => {
       disposed = true;
-      clearTimeout(timer);
-      window.removeEventListener("resize", renderPortrait);
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("mousemove", onMove);
     };
   }, []);
 
@@ -133,10 +186,15 @@ export function Hero() {
 
       <div className="pointer-events-none relative z-10 mx-auto flex w-full max-w-[1700px] flex-1 flex-col justify-between px-6 md:px-10">
         <div className="flex flex-col gap-1.5 pt-5">
-          <p className="font-light uppercase tracking-[0.06em] text-accent text-[clamp(16px,4.6vw,24px)]">
+          <p
+            data-reveal="true"
+            className="font-light uppercase tracking-[0.06em] text-accent text-[clamp(16px,4.6vw,24px)]"
+          >
             {hero.role}
           </p>
-          <p className="hud-label text-muted/80">{hero.specialization}</p>
+          <p data-reveal="true" style={{ transitionDelay: "80ms" }} className="hud-label text-muted/80">
+            {hero.specialization}
+          </p>
         </div>
 
         <div className="pointer-events-auto">
@@ -144,20 +202,27 @@ export function Hero() {
             <WeightedWord
               word={firstName}
               base={320}
+              revealDelay="150ms"
               leading="leading-[0.86]"
               className="text-[clamp(2.3rem,0.5rem+10.3vw,10.3rem)] text-muted tracking-[-0.01em]"
             />
             <WeightedWord
               word={lastName}
               base={900}
+              revealDelay="260ms"
               leading="leading-[0.84]"
               className="text-[clamp(3.5rem,0.8rem+14.8vw,14.8rem)] text-accent tracking-[-0.02em]"
             />
           </h1>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
-            {[hero.stat, hero.location, hero.availability].map((tag) => (
-              <span key={tag} className="hud-label flex items-center gap-2 text-muted/80">
+            {[hero.stat, hero.location, hero.availability].map((tag, i) => (
+              <span
+                key={tag}
+                data-reveal="true"
+                style={{ transitionDelay: `${380 + i * 90}ms` }}
+                className="hud-label flex items-center gap-2 text-muted/80"
+              >
                 <span aria-hidden="true" className="block size-1.5 bg-accent" />
                 {tag}
               </span>
