@@ -5,7 +5,6 @@ import {
   drawAmbientField,
   makeAmbientField,
   loadImage,
-  type AmbientField,
 } from "../../lib/dither";
 import { ScrambleText } from "../ui/ScrambleText";
 
@@ -82,10 +81,6 @@ function WeightedWord({
   );
 }
 
-/**
- * Low-res dithered background, pixel-upscaled:
- * a noise field with a cursor-following dither blob + the portrait.
- */
 function HeroBackdrop() {
   const fieldRef = useRef<HTMLCanvasElement>(null);
   const portraitRef = useRef<HTMLCanvasElement>(null);
@@ -96,73 +91,65 @@ function HeroBackdrop() {
     if (!field || !portrait) return;
 
     let disposed = false;
-    let frame = 0;
-    let ambient: AmbientField | null = null;
     let img: HTMLImageElement | null = null;
-    // blob position in canvas coords; eased toward the cursor
-    let bx = -1;
-    let by = -1;
-    let tx = -1;
-    let ty = -1;
-
-    const sizeField = () => {
+    
+    // cached fields
+    let fieldAmbient: any = null;
+    
+    const sizeCanvas = () => {
       const aspect = field.clientHeight > 0 ? field.clientWidth / field.clientHeight : 16 / 9;
-      field.width = 240;
-      field.height = Math.max(1, Math.round(240 / aspect));
-      if (img) ambient = makeAmbientField(field, img);
-    };
-
-    const renderField = () => {
-      if (disposed) return;
-      if (ambient) {
-        // ease the blob toward the cursor for a trailing feel
-        if (tx >= 0) {
-          bx = bx < 0 ? tx : bx + (tx - bx) * 0.14;
-          by = by < 0 ? ty : by + (ty - by) * 0.14;
-        }
-        drawAmbientField(field, ambient, bx, by);
+      const res = aspect < 1 ? 240 : 420; // Higher resolution on desktop for crispness
+      field.width = res;
+      field.height = Math.max(1, Math.round(res / aspect));
+      if (img) {
+         fieldAmbient = makeAmbientField(field, img);
       }
-      frame = requestAnimationFrame(renderField);
     };
 
-    const onMove = (e: MouseEvent) => {
-      const rect = field.getBoundingClientRect();
-      if (e.clientY < rect.top || e.clientY > rect.bottom) {
-        tx = -1;
-        ty = -1;
-        return;
+    const render = () => {
+      if (disposed || !img || !fieldAmbient) return;
+
+      const aspect = field.width / field.height;
+      const narrow = aspect < 1;
+      
+      const ctx = portrait.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, field.width, field.height);
       }
-      tx = ((e.clientX - rect.left) / rect.width) * field.width;
-      ty = ((e.clientY - rect.top) / rect.height) * field.height;
+      
+      const fCtx = field.getContext("2d");
+      if (fCtx) {
+        fCtx.clearRect(0, 0, field.width, field.height);
+      }
+
+      drawAmbientField(field, fieldAmbient);
+
+      if (narrow) {
+        drawDitheredPortrait(portrait, img, hero.photoCrop, { anchorX: 0.45, zoom: 1, res: field.width });
+      } else {
+        // Move image slightly left from the right edge on desktop (anchorX: 0.80)
+        drawDitheredPortrait(portrait, img, hero.photoCropFull, { anchorX: 0.80, zoom: 1, res: field.width });
+      }
     };
 
-    const renderPortrait = () => {
-      if (img && !disposed) drawDitheredPortrait(portrait, img, hero.photoCrop, 0.7);
-    };
-
-    sizeField();
-    renderField();
     loadImage(about.photo)
       .then((loaded) => {
         img = loaded;
-        sizeField();
-        renderPortrait();
+        sizeCanvas();
+        render(); // render once, no need for requestAnimationFrame if static
       })
-      .catch(() => {
-        /* portrait is decorative — the ambient field alone still reads correctly */
-      });
+      .catch(() => {});
 
     const onResize = () => {
-      sizeField();
-      renderPortrait();
+      sizeCanvas();
+      render();
     };
+
     window.addEventListener("resize", onResize);
-    window.addEventListener("mousemove", onMove, { passive: true });
+    
     return () => {
       disposed = true;
-      cancelAnimationFrame(frame);
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("mousemove", onMove);
     };
   }, []);
 
@@ -178,14 +165,14 @@ function HeroBackdrop() {
   );
 }
 
-export function Hero() {
+export function Hero({ ready = true }: { ready?: boolean }) {
   const [firstName, lastName] = [hero.firstName, `${hero.lastName}.`];
 
   return (
     <section
       id="top"
       aria-label="Intro"
-      className="relative flex min-h-[calc(100svh-6.5rem)] flex-col overflow-clip bg-ink pb-8 pt-12"
+      className="relative flex min-h-[100svh] flex-col overflow-clip bg-ink pb-8 pt-12"
     >
       <HeroBackdrop />
 
@@ -195,10 +182,10 @@ export function Hero() {
             data-reveal="true"
             className="font-light uppercase tracking-[0.06em] text-accent text-[clamp(16px,4.6vw,24px)]"
           >
-            <ScrambleText text={hero.role} duration={1100} />
+            <ScrambleText text={hero.role} trigger={ready} duration={1600} />
           </p>
           <p data-reveal="true" style={{ transitionDelay: "80ms" }} className="hud-label text-muted/80">
-            {hero.specialization}
+            <ScrambleText text={hero.specialization} trigger={ready} duration={2000} />
           </p>
         </div>
 

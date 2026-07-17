@@ -10,11 +10,13 @@ export function ScrambleText({
   text,
   trigger = true,
   duration = 900,
+  mode = "decode",
   className,
 }: {
   text: string;
   trigger?: boolean;
   duration?: number;
+  mode?: "decode" | "random";
   className?: string;
 }) {
   const [display, setDisplay] = useState(text);
@@ -30,11 +32,11 @@ export function ScrambleText({
 
     const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / duration);
-      const settled = Math.floor(p * text.length);
+      const settled = mode === "decode" ? Math.floor(p * text.length) : 0;
       let out = "";
       for (let i = 0; i < text.length; i++) {
         const c = text[i];
-        if (i < settled || c === " " || c === "·" || c === "&" || c === "/" || c === ".") {
+        if (i < settled || c === " " || c === "·" || c === "&" || c === "/" || c === "." || c === "@") {
           out += c;
         } else {
           out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];

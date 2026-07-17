@@ -121,16 +121,28 @@ export default function ProjectPage() {
                   </p>
                 ))}
               </div>
-              {project.href && (
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="clip-chamfer hud-label mt-10 inline-block bg-accent px-5 py-3 text-ink transition-opacity hover:opacity-85"
-                >
-                  OPEN PROJECT ↗
-                </a>
-              )}
+              <div className="mt-10 flex flex-wrap gap-4">
+                {project.href && (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="clip-chamfer hud-label inline-block bg-accent px-5 py-3 text-ink transition-opacity hover:opacity-85"
+                  >
+                    OPEN PROJECT ↗
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="clip-chamfer hud-label inline-block border border-muted/30 px-5 py-3 text-muted transition-colors hover:border-accent/60 hover:text-accent"
+                  >
+                    GITHUB ↗
+                  </a>
+                )}
+              </div>
             </motion.div>
 
             <motion.div {...fadeUp(0.18)}>

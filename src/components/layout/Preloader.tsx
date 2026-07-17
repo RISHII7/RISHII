@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { preloader } from "../../data/profile";
+import { ScrambleText } from "../ui/ScrambleText";
 
 /**
  * Intro overlay: mono identity block top-left, a 0→100 counter bottom-right,
@@ -53,8 +54,8 @@ export function Preloader({ onDone }: { onDone: () => void }) {
       }`}
     >
       <div className="hud-label flex flex-col gap-1.5 pt-10 text-muted/85">
-        {preloader.lines.map((line) => (
-          <span key={line}>{line}</span>
+        {preloader.lines.map((line, i) => (
+          <ScrambleText key={line} text={line} duration={1000 + i * 350} />
         ))}
       </div>
 

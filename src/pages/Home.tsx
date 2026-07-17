@@ -33,7 +33,7 @@ export default function Home() {
       )}
       <Header active={active === "top" ? "" : active} />
       <main>
-        <Hero />
+        <Hero ready={ready} />
         <TechBand />
         <FeaturedWork />
         <MoreProjects />

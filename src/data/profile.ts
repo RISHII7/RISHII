@@ -7,16 +7,18 @@ export const hero = {
   location: "BASED IN PUNE / NOIDA, INDIA",
   availability: "OPEN TO REMOTE WORK",
   /**
-   * Face-focused crop of the portrait photo (fractions of the source image),
-   * used by the hero dither canvas so the subject reads like a headshot.
+   * Crops of the portrait photo (fractions of the source image).
+   * photoCrop: face-focused — used on mobile.
+   * photoCropFull: the whole subject head-to-waist — used on desktop.
    */
   photoCrop: { x: 0.16, y: 0.03, w: 0.4, h: 0.42 },
+  photoCropFull: { x: 0.16, y: 0.03, w: 0.4, h: 0.42 },
 } as const;
 
 export const preloader = {
   lines: [
     "RUSHIKESH PALANDE",
-    "PORTFOLIO — 2026",
+    "SOFTWARE ENGINEER",
     "FULL-STACK · AI · SAAS",
     "PUNE / NOIDA → REMOTE",
   ],

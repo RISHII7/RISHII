@@ -38,16 +38,19 @@ function lowRes(canvas: HTMLCanvasElement, w = 240): { w: number; h: number } {
 
 /**
  * Ordered-dither monochrome portrait from a face-focused crop of `img`,
- * fit to the full canvas height and centered on `anchorX` (canvas-width
- * fraction). Edges dissolve into the background field.
+ * fit to the canvas height (times `zoom`), centered on `anchorX`
+ * (canvas-width fraction) and top-aligned so the head is never cropped.
+ * Edges dissolve into the background field.
  */
 export function drawDitheredPortrait(
   canvas: HTMLCanvasElement,
   img: HTMLImageElement,
   crop: CropRect,
-  anchorX = 0.72,
+  opts: { anchorX?: number; zoom?: number; res?: number } = {},
+  blobOpts?: { bx: number; by: number; fieldW: number; fieldH: number }
 ): void {
-  const { w, h } = lowRes(canvas);
+  const { anchorX = 0.72, zoom = 1, res = 240 } = opts;
+  const { w, h } = lowRes(canvas, res);
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
@@ -56,10 +59,12 @@ export function drawDitheredPortrait(
   const sw = crop.w * img.width;
   const sh = crop.h * img.height;
 
-  // fit crop to full canvas height
-  const scale = h / sh;
+  // fit crop to canvas height, then zoom; top-aligned keeps the head whole
+  const scale = (h / sh) * zoom;
   const dw = Math.round(sw * scale);
   const dx = Math.round(w * anchorX - dw / 2);
+
+  const dh = Math.round(sh * scale);
 
   const off = document.createElement("canvas");
   off.width = w;
@@ -68,27 +73,95 @@ export function drawDitheredPortrait(
   if (!octx) return;
   // slight blur at low res softens the dither clusters like the reference
   octx.filter = "blur(0.5px)";
-  octx.drawImage(img, sx, sy, sw, sh, dx, 0, dw, h);
+  octx.drawImage(img, sx, sy, sw, sh, dx, 0, dw, dh);
 
   const px = octx.getImageData(0, 0, w, h).data;
   ctx.clearRect(0, 0, w, h);
 
-  const light = "#a8a5a0";
-  const mid = "#6b6a66";
-  const dark = "#3a3a38";
-  const fadeBand = Math.max(6, Math.round(dw * 0.22));
+  const light = "#cfccc6";
+  const mid = "#8f8c88";
+  const dark = "#3f3f3d";
+  const fadeBand = Math.max(6, Math.round(dw * 0.18));
 
   for (let y = 0; y < h; y++) {
     for (let x = Math.max(0, dx); x < Math.min(w, dx + dw); x++) {
       const i = (y * w + x) * 4;
       if (px[i + 3] < 40) continue;
-      const lum = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      const raw = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      
+      // if blobOpts is passed, we check proximity to cursor blob to erase points
+      let eraser = 1;
+      if (blobOpts && blobOpts.bx >= 0) {
+        const bd = Math.hypot(x - blobOpts.bx, y - blobOpts.by);
+        const br = w * 0.18; // radius of eraser blob in low-res pixels, scales with width
+        if (bd < br) {
+          // completely erase near the center, smoothly falloff at the edge
+          eraser = Math.pow(bd / br, 2.5);
+        }
+      }
+
+      if (eraser < 0.05) continue; // skipped
+
+      // contrast boost so facial planes separate cleanly when dithered
+      const lum = Math.min(1, Math.max(0, (raw - 0.5) * 1.6 + 0.56));
+      // true blacks stay empty — the face pops against the dark field
+      if (lum < 0.16) continue;
       // dissolve toward both crop edges
       const edge = Math.min(x - dx, dx + dw - x);
       const fade = Math.min(1, edge / fadeBand);
       const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
-      if (lum * fade < threshold) continue;
-      ctx.fillStyle = lum > 0.72 ? light : lum > 0.42 ? mid : dark;
+      if (lum * fade * 1.1 * eraser < threshold * 0.95) continue;
+      ctx.fillStyle = lum > 0.7 ? light : lum > 0.42 ? mid : dark;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
+/**
+ * Whole-photo ordered dither, cover-fit across the entire canvas (the
+ * "mobile look"): bright checkerboard rendering of the full scene, face
+ * kept in frame via `faceX` (image-width fraction) anchored to `anchorX`.
+ */
+export function drawDitheredCover(
+  canvas: HTMLCanvasElement,
+  img: HTMLImageElement,
+  opts: { faceX?: number; anchorX?: number } = {},
+): void {
+  const { faceX = 0.36, anchorX = 0.5 } = opts;
+  const { w, h } = lowRes(canvas);
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const scale = Math.max(w / img.width, h / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  // pull the face toward anchorX, but never expose canvas beyond the image
+  const dx = Math.min(0, Math.max(w - dw, w * anchorX - faceX * dw));
+  const dy = 0; // top-aligned: the head lives in the upper part of the photo
+
+  const off = document.createElement("canvas");
+  off.width = w;
+  off.height = h;
+  const octx = off.getContext("2d");
+  if (!octx) return;
+  octx.filter = "blur(0.5px)";
+  octx.drawImage(img, dx, dy, dw, dh);
+
+  const px = octx.getImageData(0, 0, w, h).data;
+  ctx.clearRect(0, 0, w, h);
+
+  const light = "#c2bfb9";
+  const mid = "#8a8783";
+  const dark = "#454543";
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      if (px[i + 3] < 40) continue;
+      const lum = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
+      if (lum * 1.15 < threshold * 0.92) continue;
+      ctx.fillStyle = lum > 0.68 ? light : lum > 0.4 ? mid : dark;
       ctx.fillRect(x, y, 1, 1);
     }
   }
@@ -137,41 +210,22 @@ export function makeAmbientField(canvas: HTMLCanvasElement, img: HTMLImageElemen
   return { lum, jitter, w, h };
 }
 
-/**
- * Render the ambient field with a soft reveal blob trailing the cursor
- * (`bx`/`by` in canvas coords; pass -1 to hide the blob).
- */
-export function drawAmbientField(
-  canvas: HTMLCanvasElement,
-  field: AmbientField,
-  bx = -1,
-  by = -1,
-): void {
+/** Render the static ambient field (cloudy dithered echo of the photo). */
+export function drawAmbientField(canvas: HTMLCanvasElement, field: AmbientField): void {
   const { lum, jitter, w, h } = field;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.clearRect(0, 0, w, h);
 
-  const blobR = Math.max(18, Math.round(w * 0.11));
-
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const i = y * w + x;
-      // dark ambient level from the blurred photo, plus grain
-      let v = lum[i] * 0.42 + jitter[i] * 0.08;
-      let lit = 0;
-      if (bx >= 0) {
-        const d = Math.hypot(x - bx, y - by);
-        if (d < blobR) {
-          const t = 1 - d / blobR;
-          lit = t * t;
-          v += lit * 0.5;
-        }
-      }
+      // faint ambient level from the blurred photo, plus grain — kept dim
+      // so the portrait owns the frame
+      const v = lum[i] * 0.26 + jitter[i] * 0.05;
       const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
       if (v < threshold) continue;
-      ctx.fillStyle =
-        lit > 0.45 ? "#8a8a86" : v > 0.5 ? "#4e4e4b" : v > 0.3 ? "#343432" : "#212120";
+      ctx.fillStyle = v > 0.3 ? "#343432" : "#212120";
       ctx.fillRect(x, y, 1, 1);
     }
   }

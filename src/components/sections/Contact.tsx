@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { site } from "../../data/site";
 import { MarqueeTitle, SectionEyebrow, SectionFrame } from "../ui/SectionShell";
+import { ScrambleText } from "../ui/ScrambleText";
 
 const channels = [
   { label: "EMAIL", value: site.email, href: `mailto:${site.email}` },
@@ -14,6 +15,7 @@ const channels = [
 
 /** Contact row: mono label, giant value, accent arrow. */
 function ChannelRow({ label, value, href }: { label: string; value: string; href: string }) {
+  const [hoverKey, setHoverKey] = useState(0);
   const external = href.startsWith("http");
   return (
     <a
@@ -23,8 +25,16 @@ function ChannelRow({ label, value, href }: { label: string; value: string; href
     >
       <p className="hud-label text-muted/75">{label}</p>
       <p className="mt-3 flex items-baseline justify-between gap-6">
-        <span className="break-all text-[clamp(1.6rem,5.2vw,4.75rem)] font-black lowercase leading-none text-muted transition-colors [transition-duration:var(--dur-hover)] group-hover/ch:text-accent">
-          {value}
+        <span 
+          className="break-all text-[clamp(1.6rem,5.2vw,4.75rem)] font-black lowercase leading-none text-muted transition-colors [transition-duration:var(--dur-hover)] group-hover/ch:text-accent"
+          onMouseEnter={() => setHoverKey(k => k + 1)}
+          onMouseLeave={() => setHoverKey(k => k + 1)}
+        >
+          {hoverKey > 0 ? (
+            <ScrambleText key={hoverKey} text={value} duration={2000} mode="decode" />
+          ) : (
+            value
+          )}
         </span>
         <span
           aria-hidden="true"

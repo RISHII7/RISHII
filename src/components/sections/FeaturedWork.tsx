@@ -30,6 +30,8 @@ function WorkCard({
   style: React.CSSProperties;
   active: boolean;
 }) {
+  const [hoverKey, setHoverKey] = useState(0);
+
   return (
     <div className="fw-card-absolute" style={style}>
       <Link
@@ -37,12 +39,20 @@ function WorkCard({
         aria-label={`Open ${project.title} case study`}
         className="contents"
       >
-        <article className="fw-card cursor-pointer">
+        <article 
+          className="fw-card cursor-pointer"
+          onMouseEnter={() => setHoverKey(k => k + 1)}
+          onMouseLeave={() => setHoverKey(k => k + 1)}
+        >
           <div className="fw-card__content">
             <div>
               <p className="text-lead font-light italic text-muted/80">{project.category}</p>
               <h3 className="mt-2 text-display-sm font-black uppercase leading-none text-accent">
-                <ScrambleText text={project.title} trigger={active} duration={800} />
+                {hoverKey > 0 ? (
+                  <ScrambleText key={hoverKey} text={project.title} duration={800} mode="decode" />
+                ) : (
+                  project.title
+                )}
               </h3>
               <p className="mt-4 max-w-[38ch] text-body font-light italic text-muted/85">
                 {project.description}
