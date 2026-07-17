@@ -15,8 +15,9 @@ export function SectionEyebrow({ number, label }: { number: string; label: strin
 }
 
 /**
- * Giant scroll-linked marquee heading: repeated outline+solid word pairs,
- * translated horizontally in proportion to the section's scroll progress.
+ * Giant marquee heading: repeated outline+solid word pairs on a perpetual
+ * leftward crawl, nudged further by scroll. The track holds 8 repetitions,
+ * so translation wraps every 12.5% for a seamless loop.
  */
 export function MarqueeTitle({
   id,
@@ -33,31 +34,29 @@ export function MarqueeTitle({
   const [shift, setShift] = useState(0);
 
   useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame = 0;
+    let base = 0;
+    let lastT = performance.now();
+    let lastScroll = window.scrollY;
 
-    const update = () => {
-      frame = 0;
-      const el = trackRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const viewport = window.innerHeight;
-      // 0 when the title enters the viewport bottom, 1 when it leaves the top
-      const t = Math.min(1, Math.max(0, (viewport - rect.top) / (viewport + rect.height)));
-      setShift(-t * 12.5);
+    const tick = (t: number) => {
+      const dt = Math.min(0.1, (t - lastT) / 1000);
+      lastT = t;
+      // perpetual drift …
+      if (!reduced) base -= dt * 0.9;
+      // … plus scroll influence in the drift direction
+      const dy = window.scrollY - lastScroll;
+      lastScroll = window.scrollY;
+      base -= Math.abs(dy) * 0.004;
+      // wrap every repetition (100% / 8) so the loop is seamless
+      const wrapped = base % 12.5;
+      setShift(wrapped > 0 ? wrapped - 12.5 : wrapped);
+      frame = requestAnimationFrame(tick);
     };
 
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   return (

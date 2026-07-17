@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { featuredWork, type FeaturedProject } from "../../data/featuredWork";
 import { MarqueeTitle, SectionEyebrow } from "../ui/SectionShell";
+import { ScrambleText } from "../ui/ScrambleText";
 
 /** Styled cover shown until a real screenshot is provided. */
-function PlaceholderCover({ title }: { title: string }) {
+export function PlaceholderCover({ title }: { title: string }) {
   return (
     <div className="flex size-full items-center justify-center bg-[#161616]">
       <span className="hud-label text-muted/40">{title} — SCREENSHOT PENDING</span>
@@ -11,59 +13,68 @@ function PlaceholderCover({ title }: { title: string }) {
   );
 }
 
-function WorkCard({ project, style }: { project: FeaturedProject; style: React.CSSProperties }) {
-  const inner = (
-    <article className="fw-card">
-      <div className="fw-card__content">
-        <div>
-          <p className="text-lead font-light italic text-muted/80">{project.category}</p>
-          <h3 className="mt-2 text-display-sm font-black uppercase leading-none text-accent">
-            {project.title}
-          </h3>
-          <p className="mt-4 max-w-[38ch] text-body font-light italic text-muted/85">
-            {project.description}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-x-10 gap-y-4">
-          {project.metrics.map((m) => (
-            <div key={m.label} className="fw-metric">
-              <span className="fw-metric__val">{m.value}</span>
-              <span className="fw-metric__lbl">{m.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="relative flex-1">
-        <div className="fw-cinema-frame">
-          <div className="fw-cinema-img">
-            {project.image ? (
-              <img src={project.image} alt={`${project.title} — screenshot`} loading="lazy" />
-            ) : (
-              <PlaceholderCover title={project.title} />
-            )}
-          </div>
-        </div>
-        <div className="fw-cinema-corners" />
-      </div>
-    </article>
+export function CardMedia({ project }: { project: FeaturedProject }) {
+  return project.image ? (
+    <img src={project.image} alt={`${project.title} — screenshot`} loading="lazy" />
+  ) : (
+    <PlaceholderCover title={project.title} />
   );
+}
 
+function WorkCard({
+  project,
+  style,
+  active,
+}: {
+  project: FeaturedProject;
+  style: React.CSSProperties;
+  active: boolean;
+}) {
   return (
     <div className="fw-card-absolute" style={style}>
-      {project.href ? (
-        <a href={project.href} target="_blank" rel="noreferrer" className="contents">
-          {inner}
-        </a>
-      ) : (
-        inner
-      )}
+      <Link
+        to={`/work/${project.slug}`}
+        aria-label={`Open ${project.title} case study`}
+        className="contents"
+      >
+        <article className="fw-card cursor-pointer">
+          <div className="fw-card__content">
+            <div>
+              <p className="text-lead font-light italic text-muted/80">{project.category}</p>
+              <h3 className="mt-2 text-display-sm font-black uppercase leading-none text-accent">
+                <ScrambleText text={project.title} trigger={active} duration={800} />
+              </h3>
+              <p className="mt-4 max-w-[38ch] text-body font-light italic text-muted/85">
+                {project.description}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-x-10 gap-y-4">
+              {project.metrics.map((m) => (
+                <div key={m.label} className="fw-metric">
+                  <span className="fw-metric__val">{m.value}</span>
+                  <span className="fw-metric__lbl">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative flex-1">
+            <div className="fw-cinema-frame">
+              <div className="fw-cinema-img">
+                <CardMedia project={project} />
+              </div>
+            </div>
+            <div className="fw-cinema-corners" />
+          </div>
+        </article>
+      </Link>
     </div>
   );
 }
 
 /**
  * Sticky deck: the section pins while scroll progress deals one card at a
- * time; each incoming card slides up over the previous one.
+ * time; each incoming card slides up over the previous one. Clicking a card
+ * navigates to its case-study page.
  */
 export function FeaturedWork() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -98,6 +109,7 @@ export function FeaturedWork() {
 
   const n = featuredWork.length;
   const step = 1 / n;
+  const activeIdx = Math.min(n - 1, Math.floor(progress / step));
 
   return (
     <section id="work" aria-labelledby="work-title" className="fw-deck relative bg-ink">
@@ -121,7 +133,14 @@ export function FeaturedWork() {
                 pointerEvents: entering > 0.5 ? "auto" : "none",
                 transform: `translateY(${(1 - entering) * 105}%)`,
               };
-              return <WorkCard key={project.number} project={project} style={style} />;
+              return (
+                <WorkCard
+                  key={project.number}
+                  project={project}
+                  style={style}
+                  active={i === activeIdx}
+                />
+              );
             })}
           </div>
         </div>

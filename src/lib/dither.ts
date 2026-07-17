@@ -66,6 +66,8 @@ export function drawDitheredPortrait(
   off.height = h;
   const octx = off.getContext("2d");
   if (!octx) return;
+  // slight blur at low res softens the dither clusters like the reference
+  octx.filter = "blur(0.5px)";
   octx.drawImage(img, sx, sy, sw, sh, dx, 0, dw, h);
 
   const px = octx.getImageData(0, 0, w, h).data;
@@ -92,54 +94,85 @@ export function drawDitheredPortrait(
   }
 }
 
-/** Static noise-field values in [0,1), reusable across frames. */
-export function makeFieldBase(w: number, h: number): Float32Array {
-  const base = new Float32Array(w * h);
-  for (let i = 0; i < base.length; i++) base[i] = Math.random();
-  return base;
+export interface AmbientField {
+  /** luminance of the blurred full photo, per low-res pixel */
+  lum: Float32Array;
+  /** static per-pixel jitter so the clouds feel grainy */
+  jitter: Float32Array;
+  w: number;
+  h: number;
 }
 
 /**
- * Sparse dot field with a soft dithered blob that follows the cursor
- * (`bx`/`by` in canvas coords; pass -1 to hide).
+ * Precompute the ambient backdrop: the WHOLE photo, blurred and darkened,
+ * sampled at low resolution. Dithering this luminance map produces the
+ * cloudy dot-matrix background the hero sits on.
  */
-export function drawDitherField(
+export function makeAmbientField(canvas: HTMLCanvasElement, img: HTMLImageElement): AmbientField {
+  const w = canvas.width;
+  const h = canvas.height;
+
+  const off = document.createElement("canvas");
+  off.width = w;
+  off.height = h;
+  const octx = off.getContext("2d");
+  const lum = new Float32Array(w * h);
+  const jitter = new Float32Array(w * h);
+  for (let i = 0; i < jitter.length; i++) jitter[i] = Math.random();
+
+  if (octx) {
+    // cover-fit the full photo, heavily blurred relative to the low res
+    const scale = Math.max(w / img.width, h / img.height);
+    const dw = img.width * scale;
+    const dh = img.height * scale;
+    octx.filter = "blur(3px)";
+    octx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    const px = octx.getImageData(0, 0, w, h).data;
+    for (let i = 0; i < lum.length; i++) {
+      const j = i * 4;
+      lum[i] = (0.2126 * px[j] + 0.7152 * px[j + 1] + 0.0722 * px[j + 2]) / 255;
+    }
+  }
+
+  return { lum, jitter, w, h };
+}
+
+/**
+ * Render the ambient field with a soft reveal blob trailing the cursor
+ * (`bx`/`by` in canvas coords; pass -1 to hide the blob).
+ */
+export function drawAmbientField(
   canvas: HTMLCanvasElement,
-  base: Float32Array,
+  field: AmbientField,
   bx = -1,
   by = -1,
 ): void {
-  const w = canvas.width;
-  const h = canvas.height;
+  const { lum, jitter, w, h } = field;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.clearRect(0, 0, w, h);
 
-  const blobR = Math.max(14, Math.round(w * 0.085));
+  const blobR = Math.max(18, Math.round(w * 0.11));
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      const v = base[y * w + x];
-      let boost = 0;
+      const i = y * w + x;
+      // dark ambient level from the blurred photo, plus grain
+      let v = lum[i] * 0.42 + jitter[i] * 0.08;
+      let lit = 0;
       if (bx >= 0) {
         const d = Math.hypot(x - bx, y - by);
         if (d < blobR) {
           const t = 1 - d / blobR;
-          boost = t * t * 0.85;
+          lit = t * t;
+          v += lit * 0.5;
         }
       }
-      if (boost > 0) {
-        const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
-        if (boost > threshold) {
-          ctx.fillStyle = v > 0.6 ? "#8a8a86" : "#71716d";
-          ctx.fillRect(x, y, 1, 1);
-          continue;
-        }
-      }
-      if (v > 0.955) {
-        ctx.fillStyle = v > 0.985 ? "#4a4a48" : "#242422";
-        ctx.fillRect(x, y, 1, 1);
-      }
+      const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
+      if (v < threshold) continue;
+      ctx.fillStyle =
+        lit > 0.45 ? "#8a8a86" : v > 0.5 ? "#4e4e4b" : v > 0.3 ? "#343432" : "#212120";
+      ctx.fillRect(x, y, 1, 1);
     }
   }
 }
