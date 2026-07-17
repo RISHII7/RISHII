@@ -7,21 +7,22 @@ export interface LabProject {
 
 export const lab: LabProject[] = [
   {
-    name: "ECHO",
-    tags: ["TypeScript", "Next.js", "AI Agent", "Convex"],
-    description: "AI-powered customer support platform. RAG-grounded agent with real-time dashboard & Vapi voice.",
-    href: "https://github.com/RISHII7/echo",
+    name: "NIGHT-CODE",
+    tags: ["TypeScript", "Bun", "AI Agent", "CLI"],
+    description:
+      "Terminal-native AI coding agent running on NVIDIA's free models — PLAN/BUILD modes, sandboxed file ops, persistent sessions. Zero API cost for students and solo builders.",
+    href: "https://github.com/RISHII7/night-code",
   },
   {
     name: "FLOWBROWSE",
-    tags: ["TypeScript", "Automation"],
-    description: "Open-source browser automation and workflow engine.",
+    tags: ["Next.js", "TypeScript", "shadcn/ui"],
+    description:
+      "A Next.js + shadcn/ui starter template with a structured component/hooks/lib layout and agent-skill configs — cuts the setup friction on every new build.",
     href: "https://github.com/RISHII7/Flowbrowse",
   },
-  {
-    name: "NIGHT-CODE",
-    tags: ["TypeScript", "Utilities"],
-    description: "A collection of late-night coding experiments and experimental scripts.",
-    href: "https://github.com/RISHII7/night-code",
-  },
 ];
+
+export const labFooterLink = {
+  label: "ALL CODE · GITHUB.COM/RISHII7",
+  href: "https://github.com/RISHII7?tab=repositories",
+} as const;
