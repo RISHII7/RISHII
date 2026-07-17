@@ -56,7 +56,7 @@ export function Header({ active }: { active: string }) {
           >
             <Logo />
             <span className="hud-label whitespace-nowrap text-muted">
-              PALANDE. <span className="text-muted/75">PORTFOLIO/{site.year}</span>
+              RISHII
             </span>
           </a>
 
@@ -125,7 +125,7 @@ export function Header({ active }: { active: string }) {
         aria-modal="true"
         aria-label="Menu"
         className={cn(
-          "fixed inset-0 z-[60] flex flex-col bg-ink transition-[clip-path] duration-500 ease-soft md:hidden",
+          "fixed inset-0 z-60 flex flex-col bg-ink transition-[clip-path] duration-500 ease-soft md:hidden",
           open ? "[clip-path:inset(0_0_0%)]" : "pointer-events-none [clip-path:inset(0_0_100%)]",
         )}
       >

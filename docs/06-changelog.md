@@ -2,6 +2,15 @@
 
 All notable project events, newest first.
 
+## 2026-07-17
+
+- **Real project content everywhere**: Featured Work = GHOST-AI · ECHO · NODEBASE (PR #11); More Projects = ROOMIFY · NIMBUS · APPLE MACBOOK · SENDKIT · ZENBREW · FIZZIE — all copy written from the repositories, 9 screenshots in `public/images/projects/`
+- **Case-study pages for every project**: shared template serves `/work/:slug` and `/projects/:slug` with role/scope/stack, overview, outcomes, pullquote, live + GitHub buttons, next-project navigation; section highlight follows the collection
+- **Interactions**: perpetual marquee crawl, scramble-decode on preloader/hero/card titles, preloader with role line, hover-scramble card titles (owner tweak), mobile portrait shift, contrast-boosted hero dither at higher desktop resolution
+- **SEO hardening**: WebSite JSON-LD added to Person schema, `og:site_name`/locale, robots + theme-color meta, hero image preload, per-route titles/descriptions on case studies, sitemap.xml covering all 10 URLs, `vercel.json` SPA rewrites + immutable asset caching
+- **Quality gates**: ESLint 9 flat config (TS + react-hooks) added with `lint`/`typecheck` scripts; lint, typecheck and production build all green
+- Docs 01–05 refreshed to reflect the finished feature set
+
 ## 2026-07-16 (night)
 
 - Fidelity pass from a frame-by-frame study of the target experience (PR #7):

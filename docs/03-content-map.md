@@ -1,33 +1,53 @@
 # 03 — Content Map
 
-All site copy in one place. Sources: `Rushikesh.pdf` (resume), github.com/RISHII7, prior portfolio, owner input.
+All site copy in one place. Sources: `Rushikesh.pdf` (resume), github.com/RISHII7, owner input.
+
+## Preloader
+
+Scramble-decoding identity lines: `RUSHIKESH PALANDE / SOFTWARE ENGINEER / FULL-STACK · AI · SAAS / PUNE / NOIDA → REMOTE`, eased 0→100 counter, "PRESS ANY KEY TO SKIP". Plays once per session.
 
 ## Hero
 
 | Field | Value |
 | --- | --- |
 | Name | RUSHIKESH PALANDE |
-| Role | SOFTWARE ENGINEER |
-| Specialization | FULL-STACK & AI-POWERED SYSTEMS |
+| Role | SOFTWARE ENGINEER (scramble-decodes on entrance) |
+| Specialization | FULL-STACK & AI-POWERED SYSTEMS (scramble-decodes) |
 | Stat | 2 YEARS SHIPPING SAAS |
 | Location | BASED IN PUNE / NOIDA, INDIA |
 | Availability | OPEN TO REMOTE WORK |
+| Backdrop | Canvas-dithered portrait (right, contrast-boosted) + ambient field |
 
-## 01 Featured Work — ⚠ PLACEHOLDERS
+## 01 Featured Work — REAL DATA (`src/data/featuredWork.ts`)
 
-Owner curates this list (4 slots). Excluded by owner's instruction: night-code, Flowbrowse, and resume projects (Solar/Voidchron/CAN Analyzer). Each slot needs: title, category, one-liner, tech tags, 3 outcome metrics, screenshot. **No dates on cards.**
+Three cards, each opening `/work/:slug` case-study pages with role/scope/stack/overview/outcomes/pullquote and live + GitHub links:
 
-## 02 More Projects — ⚠ PLACEHOLDERS
+1. **GHOST-AI** — AI System Design — realtime multiplayer whiteboard + autonomous AI architect (Next.js, TS, Liveblocks, Gemini, Trigger.dev)
+2. **ECHO** — AI Support Platform — embeddable 24/7 chat & voice support grounded in the customer's docs (Next.js, Convex, Gemini RAG, Vapi, Turborepo)
+3. **NODEBASE** — Automation Platform — visual workflow automation with live execution (Next.js, tRPC, Inngest, React Flow, Prisma)
 
-Six card slots, owner curates. Candidate pool: echo, ghost-ai, roomify, Nimbus, Apple-Macbook, zenbrew, Yoom, Finance, tailflow, nodebase, sendkit, gumroad, fizzie, casecobra, Lingo…
+Screenshots: `public/images/projects/{ghost-ai,echo,nodebase}.png`.
+
+## 02 More Projects — REAL DATA (`src/data/moreProjects.ts`)
+
+Six ledger rows, each opening `/projects/:slug` case-study pages (same template):
+
+1. **ROOMIFY** — AI Visualization — 2D floor plans → photorealistic 3D renders, fully serverless (Puter, Gemini)
+2. **NIMBUS** — 3D Product Experience — PBR keyboard scenes, GSAP scroll cinematography, Prismic slices
+3. **APPLE MACBOOK** — 3D Web Experience — Three.js + GSAP Apple-style showcase (5★ on GitHub)
+4. **SENDKIT** — Developer Tooling — SDK + CLI + MCP messaging toolkit, on npm
+5. **ZENBREW** — Brand Experience — coffee-house brand site, GSAP + Framer Motion
+6. **FIZZIE** — Starter Framework — typed Prismic + Next.js starter with live preview
+
+Screenshots for all six in `public/images/projects/`.
 
 ## 03 Experiment Lab — ⚠ PLACEHOLDERS
 
-Three open-source slots with tech tags + repo links. Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
+Three open-source slots with tech tags + repo links. Owner to pick. Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
 
 ## 04 About / Career
 
-**Coords line:** `PUNE — 18°31′N 73°51′E`
+**Coords line:** `PUNE — 18°31′N 73°51′E` · **Photo:** halftone duotone canvas
 
 **Experience** (years appear here; the no-dates rule applies only to project cards):
 
@@ -42,11 +62,11 @@ Three open-source slots with tech tags + repo links. Footer link: `ALL CODE · G
 
 **Core competencies (5):** Full-Stack Engineering · Real-Time Systems · AI Agents & LLM Apps · IoT & Embedded Integration · Cloud & DevOps
 
-**Core foundations (4, numbered):** 01 Systems over screens · 02 Ship end-to-end · 03 Real-time first · 04 Hardware to browser
+**Core foundations (4):** 01 Systems over screens · 02 Ship end-to-end · 03 Real-time first · 04 Hardware to browser
 
 **Toolkit:** VS Code, Claude, React, Node.js, Python, PostgreSQL, Docker, AWS, Figma, Linux
 
-**Photo:** `public/images/rushikesh.jpg` · **Resume:** `public/resume.pdf` (download link)
+**Resume:** `public/resume.pdf` (download link)
 
 ## 05 Contact
 

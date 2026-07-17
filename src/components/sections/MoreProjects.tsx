@@ -13,7 +13,7 @@ export function MoreProjects() {
         {moreProjects.map((p, i) => (
           <LogRow
             key={p.number}
-            href={p.href}
+            href={`/projects/${p.slug}`}
             big={i === 0}
             title={p.title}
             description={p.description}
@@ -21,7 +21,7 @@ export function MoreProjects() {
             meta={
               <Fragment>
                 <span>{p.number}</span>
-                {p.tags.map((t) => (
+                {p.tags.slice(0, 3).map((t) => (
                   <span key={t} className="text-muted/75 group-hover/log:text-ink/60">
                     {t}
                   </span>

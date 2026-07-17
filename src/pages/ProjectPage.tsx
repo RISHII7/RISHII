@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { featuredWork } from "../data/featuredWork";
+import { moreProjects } from "../data/moreProjects";
 import { Header } from "../components/layout/Header";
 import { StatusBar, EdgeLines } from "../components/layout/StatusBar";
 import { Footer } from "../components/layout/Footer";
@@ -17,16 +18,40 @@ const fadeUp = (delay: number) => ({
   transition: { delay, duration: 0.6, ease: EASE_SOFT },
 });
 
-/** Case-study page for a featured project — the card's click-through. */
+/** Case-study page — serves featured work (/work/:slug) and more projects (/projects/:slug). */
 export default function ProjectPage() {
   const { slug } = useParams();
-  const idx = featuredWork.findIndex((p) => p.slug === slug);
-  const project = idx >= 0 ? featuredWork[idx] : null;
-  const next = idx >= 0 ? featuredWork[(idx + 1) % featuredWork.length] : null;
+
+  // find the project in its collection; next cycles within that collection
+  const fwIdx = featuredWork.findIndex((p) => p.slug === slug);
+  const mpIdx = moreProjects.findIndex((p) => p.slug === slug);
+  const inFeatured = fwIdx >= 0;
+  const collection = inFeatured ? featuredWork : moreProjects;
+  const idx = inFeatured ? fwIdx : mpIdx;
+  const project = idx >= 0 ? collection[idx] : null;
+  const next = idx >= 0 ? collection[(idx + 1) % collection.length] : null;
+  const basePath = inFeatured ? "/work" : "/projects";
+  const backHref = inFeatured ? "/#work" : "/#projects";
+  const backLabel = inFeatured ? "← ALL WORK" : "← ALL PROJECTS";
+  const activeSection = inFeatured ? "work" : "projects";
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // per-route SEO: title + description for this case study, restored on leave
+  useEffect(() => {
+    if (!project) return;
+    const prevTitle = document.title;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    const prevDesc = meta?.content ?? "";
+    document.title = `${project.title} — ${project.category} case study · Rushikesh Palande`;
+    if (meta) meta.content = project.description;
+    return () => {
+      document.title = prevTitle;
+      if (meta) meta.content = prevDesc;
+    };
+  }, [project]);
 
   if (!project || !next) {
     return (
@@ -47,7 +72,7 @@ export default function ProjectPage() {
 
   return (
     <div className="noise">
-      <Header active="work" />
+      <Header active={activeSection} />
       <main className="bg-ink pt-14">
         <div className="mx-auto max-w-[1700px] px-6 pb-[clamp(4rem,8vw,7rem)] pt-8 md:px-10">
           <motion.div {...fadeUp(0)}>
@@ -97,15 +122,17 @@ export default function ProjectPage() {
             </div>
           </motion.div>
 
-          {/* Hero media */}
-          <motion.div
-            {...fadeUp(0.24)}
-            className="relative mt-[clamp(2rem,4vw,3.5rem)] aspect-[16/9] overflow-hidden rounded-[var(--radius-card)] border border-muted/15"
-          >
-            <div className="fw-cinema-img !filter-none">
-              <CardMedia project={project} />
-            </div>
-          </motion.div>
+          {/* Hero media — only when a screenshot exists */}
+          {project.image && (
+            <motion.div
+              {...fadeUp(0.24)}
+              className="relative mt-[clamp(2rem,4vw,3.5rem)] aspect-video overflow-hidden rounded-card border border-muted/15"
+            >
+              <div className="fw-cinema-img filter-none!">
+                <CardMedia project={project} />
+              </div>
+            </motion.div>
+          )}
 
           {/* Summary + metrics */}
           <div className="mt-[clamp(3rem,6vw,5rem)] grid gap-12 md:grid-cols-[1.15fr_0.85fr] md:gap-16">
@@ -166,11 +193,11 @@ export default function ProjectPage() {
             {...fadeUp(0.1)}
             className="mt-[clamp(4rem,8vw,7rem)] flex items-center justify-between gap-6 border-t border-dashed border-muted/25 pt-8"
           >
-            <Link to="/#work" className="hud-label text-muted/80 transition-colors hover:text-accent">
-              ← ALL WORK
+            <Link to={backHref} className="hud-label text-muted/80 transition-colors hover:text-accent">
+              {backLabel}
             </Link>
             <Link
-              to={`/work/${next.slug}`}
+              to={`${basePath}/${next.slug}`}
               className="group/next flex items-baseline gap-4 text-right"
             >
               <span className="hud-label text-muted/60">NEXT</span>
@@ -183,7 +210,7 @@ export default function ProjectPage() {
         </div>
       </main>
       <Footer />
-      <StatusBar active="work" />
+      <StatusBar active={activeSection} />
       <EdgeLines />
       <div aria-hidden="true" className="h-12" />
     </div>

@@ -24,13 +24,14 @@ export function ScrambleText({
 
   useEffect(() => {
     if (!trigger) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplay(text);
-      return;
-    }
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const t0 = performance.now();
 
     const tick = (t: number) => {
+      if (reduced) {
+        setDisplay(text);
+        return;
+      }
       const p = Math.min(1, (t - t0) / duration);
       const settled = mode === "decode" ? Math.floor(p * text.length) : 0;
       let out = "";
@@ -49,7 +50,7 @@ export function ScrambleText({
 
     frameRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [text, trigger, duration]);
+  }, [text, trigger, duration, mode]);
 
   return (
     <span className={className}>

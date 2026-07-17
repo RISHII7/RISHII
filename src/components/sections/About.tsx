@@ -10,49 +10,60 @@ import {
 } from "../../data/career";
 import { MarqueeTitle, SectionEyebrow, SectionFrame } from "../ui/SectionShell";
 import { BrandIcon } from "../ui/BrandIcon";
+import Tilt from "react-parallax-tilt";
 import { drawHalftonePortrait, loadImage } from "../../lib/dither";
 
-/** Accent-duotone halftone portrait rendered live on canvas. */
-function HalftonePortrait() {
-  const ref = useRef<HTMLCanvasElement>(null);
+/** Interactive 3D Holographic Card of the User's Portrait */
+function HoloPortraitCard() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = ref.current;
+    const canvas = canvasRef.current;
     if (!canvas) return;
-    let img: HTMLImageElement | null = null;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const render = () => {
-      if (!img || !canvas) return;
-      const accent = getComputedStyle(document.documentElement)
-        .getPropertyValue("--color-accent")
-        .trim();
-      drawHalftonePortrait(canvas, img, accent || "#c3fffc");
-    };
-
-    loadImage(about.photo)
-      .then((loaded) => {
-        img = loaded;
-        render();
-      })
-      .catch(() => {
-        /* decorative */
+    let raf: number;
+    const ro = new ResizeObserver((entries) => {
+      if (entries[0].contentRect.width === 0) return;
+      
+      loadImage(about.photo).then((img) => {
+        raf = requestAnimationFrame(() => {
+          drawHalftonePortrait(canvas, img, "#ece9e4", 5, 0.25, 0.5);
+        });
       });
-
-    window.addEventListener("resize", render);
-    const observer = new MutationObserver(render); // re-render on accent cycle
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+    });
+    
+    ro.observe(canvas);
     return () => {
-      window.removeEventListener("resize", render);
-      observer.disconnect();
+      ro.disconnect();
+      cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <div className="overflow-hidden rounded-[var(--radius-card)]">
-      <div className="relative aspect-[4/5]">
-        <canvas ref={ref} role="img" aria-label={about.photoAlt} className="block size-full" />
+    <Tilt
+      className="parallax-effect-glare-scale"
+      perspective={800}
+      glareEnable={true}
+      glareMaxOpacity={0.3}
+      glarePosition="all"
+      glareColor="var(--color-accent)"
+      glareBorderRadius="var(--radius-card)"
+      scale={1.02}
+      tiltMaxAngleX={12}
+      tiltMaxAngleY={12}
+      transitionSpeed={1500}
+      tiltReverse={true}
+    >
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-card)] border border-muted/15 bg-ink">
+        <canvas
+          ref={canvasRef}
+          className="h-full w-full object-cover opacity-90 mix-blend-screen"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(195,255,252,0.1)_0%,transparent_70%)] mix-blend-overlay pointer-events-none" />
       </div>
-    </div>
+    </Tilt>
   );
 }
 
@@ -104,7 +115,7 @@ export function About() {
       <div className="mt-[clamp(2rem,4vw,4rem)] grid gap-12 md:grid-cols-[0.85fr_1.15fr] md:gap-16">
         {/* Left: portrait, lead, location */}
         <div>
-          <HalftonePortrait />
+          <HoloPortraitCard />
           <p className="hud-label mt-3 text-right text-muted/75">{about.coords}</p>
 
           <p className="mt-[clamp(2rem,4vw,3rem)] max-w-[32ch] text-lead font-light italic text-muted/90">

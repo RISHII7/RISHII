@@ -24,11 +24,9 @@ export function CardMedia({ project }: { project: FeaturedProject }) {
 function WorkCard({
   project,
   style,
-  active,
 }: {
   project: FeaturedProject;
   style: React.CSSProperties;
-  active: boolean;
 }) {
   const [hoverKey, setHoverKey] = useState(0);
 
@@ -119,7 +117,6 @@ export function FeaturedWork() {
 
   const n = featuredWork.length;
   const step = 1 / n;
-  const activeIdx = Math.min(n - 1, Math.floor(progress / step));
 
   return (
     <section id="work" aria-labelledby="work-title" className="fw-deck relative bg-ink">
@@ -144,12 +141,7 @@ export function FeaturedWork() {
                 transform: `translateY(${(1 - entering) * 105}%)`,
               };
               return (
-                <WorkCard
-                  key={project.number}
-                  project={project}
-                  style={style}
-                  active={i === activeIdx}
-                />
+                <WorkCard key={project.number} project={project} style={style} />
               );
             })}
           </div>

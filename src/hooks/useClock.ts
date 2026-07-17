@@ -21,9 +21,6 @@ function read(): Clock {
   const now = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
   const time = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-  const total = -now.getTimezoneOffset();
-  const sign = total >= 0 ? "+" : "−";
-  const abs = Math.abs(total);
-  const offset = `${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+  const offset = "IST";
   return { time, offset };
 }
