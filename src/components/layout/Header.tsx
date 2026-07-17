@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { nav, site } from "../../data/site";
 import { cn } from "../../lib/utils";
 
@@ -37,6 +38,9 @@ function Logo() {
 
 export function Header({ active }: { active: string }) {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  // section anchors only exist on the home page; prefix "/" elsewhere
+  const anchor = (hash: string) => (pathname === "/" ? hash : `/${hash}`);
 
   return (
     <>
@@ -46,7 +50,7 @@ export function Header({ active }: { active: string }) {
       <header className="fixed left-1/2 top-0 z-50 w-full -translate-x-1/2 border border-muted/15 border-t-transparent border-x-transparent bg-ink">
         <div className="flex h-14 items-center justify-between gap-4 px-4 md:px-6">
           <a
-            href="#top"
+            href={anchor("#top")}
             aria-label={`${site.name} — back to top`}
             className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-75"
           >
@@ -62,7 +66,7 @@ export function Header({ active }: { active: string }) {
               return (
                 <a
                   key={item.href}
-                  href={item.href}
+                  href={anchor(item.href)}
                   className={cn(
                     "hud-label group/nav flex items-center px-3 py-1 transition-colors",
                     isActive ? "text-accent" : "text-muted/80 hover:text-muted",
@@ -94,7 +98,7 @@ export function Header({ active }: { active: string }) {
 
           <div className="flex items-center gap-3">
             <a
-              href="#contact"
+              href={anchor("#contact")}
               className="clip-chamfer hud-label hidden bg-accent px-4 py-2 text-ink transition-opacity hover:opacity-85 md:block"
             >
               GET IN TOUCH
@@ -143,7 +147,7 @@ export function Header({ active }: { active: string }) {
           {nav.map((item) => (
             <a
               key={item.href}
-              href={item.href}
+              href={anchor(item.href)}
               onClick={() => setOpen(false)}
               className="flex items-baseline gap-4 py-3"
             >
@@ -154,7 +158,7 @@ export function Header({ active }: { active: string }) {
         </nav>
         <div className="px-6 pb-10">
           <a
-            href="#contact"
+            href={anchor("#contact")}
             onClick={() => setOpen(false)}
             className="clip-chamfer hud-label inline-block bg-accent px-5 py-3 text-ink"
           >

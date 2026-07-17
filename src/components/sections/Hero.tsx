@@ -2,10 +2,12 @@ import { useEffect, useRef } from "react";
 import { hero, about } from "../../data/profile";
 import {
   drawDitheredPortrait,
-  drawDitherField,
-  makeFieldBase,
+  drawAmbientField,
+  makeAmbientField,
   loadImage,
+  type AmbientField,
 } from "../../lib/dither";
+import { ScrambleText } from "../ui/ScrambleText";
 
 /** Per-letter variable-weight word; letters swell toward the cursor. */
 function WeightedWord({
@@ -95,7 +97,8 @@ function HeroBackdrop() {
 
     let disposed = false;
     let frame = 0;
-    let base: Float32Array | null = null;
+    let ambient: AmbientField | null = null;
+    let img: HTMLImageElement | null = null;
     // blob position in canvas coords; eased toward the cursor
     let bx = -1;
     let by = -1;
@@ -106,17 +109,19 @@ function HeroBackdrop() {
       const aspect = field.clientHeight > 0 ? field.clientWidth / field.clientHeight : 16 / 9;
       field.width = 240;
       field.height = Math.max(1, Math.round(240 / aspect));
-      base = makeFieldBase(field.width, field.height);
+      if (img) ambient = makeAmbientField(field, img);
     };
 
     const renderField = () => {
-      if (disposed || !base) return;
-      // ease the blob toward the cursor for a trailing feel
-      if (tx >= 0) {
-        bx = bx < 0 ? tx : bx + (tx - bx) * 0.14;
-        by = by < 0 ? ty : by + (ty - by) * 0.14;
+      if (disposed) return;
+      if (ambient) {
+        // ease the blob toward the cursor for a trailing feel
+        if (tx >= 0) {
+          bx = bx < 0 ? tx : bx + (tx - bx) * 0.14;
+          by = by < 0 ? ty : by + (ty - by) * 0.14;
+        }
+        drawAmbientField(field, ambient, bx, by);
       }
-      drawDitherField(field, base, bx, by);
       frame = requestAnimationFrame(renderField);
     };
 
@@ -131,9 +136,8 @@ function HeroBackdrop() {
       ty = ((e.clientY - rect.top) / rect.height) * field.height;
     };
 
-    let img: HTMLImageElement | null = null;
     const renderPortrait = () => {
-      if (img && !disposed) drawDitheredPortrait(portrait, img, hero.photoCrop);
+      if (img && !disposed) drawDitheredPortrait(portrait, img, hero.photoCrop, 0.7);
     };
 
     sizeField();
@@ -141,10 +145,11 @@ function HeroBackdrop() {
     loadImage(about.photo)
       .then((loaded) => {
         img = loaded;
+        sizeField();
         renderPortrait();
       })
       .catch(() => {
-        /* portrait is decorative — the field alone still reads correctly */
+        /* portrait is decorative — the ambient field alone still reads correctly */
       });
 
     const onResize = () => {
@@ -190,7 +195,7 @@ export function Hero() {
             data-reveal="true"
             className="font-light uppercase tracking-[0.06em] text-accent text-[clamp(16px,4.6vw,24px)]"
           >
-            {hero.role}
+            <ScrambleText text={hero.role} duration={1100} />
           </p>
           <p data-reveal="true" style={{ transitionDelay: "80ms" }} className="hud-label text-muted/80">
             {hero.specialization}
