@@ -37,7 +37,7 @@ Six ledger rows, each opening `/projects/:slug` case-study pages (same template)
 3. **APPLE MACBOOK** — 3D Web Experience — Three.js + GSAP Apple-style showcase (5★ on GitHub)
 4. **SENDKIT** — Developer Tooling — SDK + CLI + MCP messaging toolkit, on npm
 5. **ZENBREW** — Brand Experience — coffee-house brand site, GSAP + Framer Motion
-6. **FIZZIE** — Starter Framework — typed Prismic + Next.js starter with live preview
+6. **FIZZIE** — Beverage Brand — "Fizzi, Soda for Gutsy People" premium health-soda brand site, shoppable flavor carousel, Prismic-driven (Next.js, TS, Tailwind)
 
 Screenshots for all six in `public/images/projects/`.
 
