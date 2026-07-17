@@ -5,6 +5,7 @@ import {
   drawAmbientField,
   makeAmbientField,
   loadImage,
+  type AmbientField,
 } from "../../lib/dither";
 import { ScrambleText } from "../ui/ScrambleText";
 
@@ -94,7 +95,7 @@ function HeroBackdrop() {
     let img: HTMLImageElement | null = null;
     
     // cached fields
-    let fieldAmbient: any = null;
+    let fieldAmbient: AmbientField | null = null;
     
     const sizeCanvas = () => {
       const aspect = field.clientHeight > 0 ? field.clientWidth / field.clientHeight : 16 / 9;
@@ -172,7 +173,7 @@ export function Hero({ ready = true }: { ready?: boolean }) {
     <section
       id="top"
       aria-label="Intro"
-      className="relative flex min-h-[100svh] flex-col overflow-clip bg-ink pb-8 pt-12"
+      className="relative flex min-h-svh flex-col overflow-clip bg-ink pb-8 pt-12"
     >
       <HeroBackdrop />
 

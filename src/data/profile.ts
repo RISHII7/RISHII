@@ -30,6 +30,6 @@ export const about = {
   photo: "/images/rushikesh.jpg",
   photoAlt: "Rushikesh Palande",
   intro:
-    "Software engineer working across financial technology, full-stack SaaS, real-time systems, and embedded hardware. Currently in Risk, Finance & Treasury at Barclays — before that, shipping production systems end to end: browser to backend to firmware.",
+    "I engineer high-performance systems that scale without compromise. Currently architecting mission-critical Risk, Finance & Treasury platforms at Barclays. My expertise spans the absolute extremes of the technical stack—from ultra-fluid browser interfaces and highly concurrent cloud backends, all the way down to bare-metal embedded firmware. If it needs to be fast, scalable, and bulletproof, I build it.",
   resumeHref: "/resume.pdf",
 } as const;

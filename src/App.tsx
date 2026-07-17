@@ -15,6 +15,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/work/:slug" element={<ProjectPage />} />
+      <Route path="/projects/:slug" element={<ProjectPage />} />
     </Routes>
   );
 }

@@ -26,7 +26,7 @@ function ChannelRow({ label, value, href }: { label: string; value: string; href
       <p className="hud-label text-muted/75">{label}</p>
       <p className="mt-3 flex items-baseline justify-between gap-6">
         <span 
-          className="break-all text-[clamp(1.6rem,5.2vw,4.75rem)] font-black lowercase leading-none text-muted transition-colors [transition-duration:var(--dur-hover)] group-hover/ch:text-accent"
+          className="break-all text-[clamp(1.6rem,5.2vw,4.75rem)] font-black lowercase leading-none text-muted transition-colors duration-(--dur-hover) group-hover/ch:text-accent"
           onMouseEnter={() => setHoverKey(k => k + 1)}
           onMouseLeave={() => setHoverKey(k => k + 1)}
         >
@@ -38,7 +38,7 @@ function ChannelRow({ label, value, href }: { label: string; value: string; href
         </span>
         <span
           aria-hidden="true"
-          className="shrink-0 text-[clamp(1.2rem,2.4vw,2rem)] text-accent transition-transform [transition-duration:var(--dur-hover)] [transition-timing-function:var(--ease-soft)] group-hover/ch:-translate-y-1 group-hover/ch:translate-x-1"
+          className="shrink-0 text-[clamp(1.2rem,2.4vw,2rem)] text-accent transition-transform duration-(--dur-hover) ease-soft group-hover/ch:-translate-y-1 group-hover/ch:translate-x-1"
         >
           ↗
         </span>
@@ -73,7 +73,7 @@ export function Contact() {
 
       <form
         onSubmit={submit}
-        className="mt-[clamp(2.5rem,5vw,4rem)] rounded-[var(--radius-card)] border border-muted/20 p-6 md:p-10"
+        className="mt-[clamp(2.5rem,5vw,4rem)] rounded-card border border-muted/20 p-6 md:p-10"
       >
         <p className="hud-label text-accent">SEND A MESSAGE</p>
 

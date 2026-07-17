@@ -240,6 +240,8 @@ export function drawHalftonePortrait(
   img: HTMLImageElement,
   accent: string,
   cell = 5,
+  offsetX = 0.5,
+  offsetY = 0.5,
 ): void {
   const rect = canvas.getBoundingClientRect();
   const w = Math.max(1, Math.round(rect.width));
@@ -259,7 +261,10 @@ export function drawHalftonePortrait(
   const scale = Math.max(w / img.width, h / img.height);
   const dw = img.width * scale;
   const dh = img.height * scale;
-  octx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  
+  const dx = (w - dw) * offsetX;
+  const dy = (h - dh) * offsetY;
+  octx.drawImage(img, dx, dy, dw, dh);
   const px = octx.getImageData(0, 0, w, h).data;
 
   ctx.fillStyle = "#0e0e0e";

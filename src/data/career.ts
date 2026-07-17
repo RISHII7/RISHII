@@ -38,11 +38,6 @@ export const experience: ExperienceItem[] = [
     role: "SOFTWARE DEVELOPER",
     period: "[2025-2026]",
   },
-  {
-    company: "HAMSA HITECH",
-    role: "FULL-STACK DEVELOPER INTERN",
-    period: "[2023-2024]",
-  },
 ];
 
 export const education: EducationItem[] = [

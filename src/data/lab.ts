@@ -5,29 +5,23 @@ export interface LabProject {
   href: string;
 }
 
-// PLACEHOLDER — awaiting user's project list (3 slots).
 export const lab: LabProject[] = [
   {
-    name: "EXPERIMENT-ONE",
-    tags: ["TypeScript"],
-    description: "Awaiting your pick — an open-source build goes here",
-    href: "https://github.com/RISHII7",
+    name: "ECHO",
+    tags: ["TypeScript", "Next.js", "AI Agent", "Convex"],
+    description: "AI-powered customer support platform. RAG-grounded agent with real-time dashboard & Vapi voice.",
+    href: "https://github.com/RISHII7/echo",
   },
   {
-    name: "EXPERIMENT-TWO",
-    tags: ["TypeScript"],
-    description: "Awaiting your pick",
-    href: "https://github.com/RISHII7",
+    name: "FLOWBROWSE",
+    tags: ["TypeScript", "Automation"],
+    description: "Open-source browser automation and workflow engine.",
+    href: "https://github.com/RISHII7/Flowbrowse",
   },
   {
-    name: "EXPERIMENT-THREE",
-    tags: ["Python"],
-    description: "Awaiting your pick",
-    href: "https://github.com/RISHII7",
+    name: "NIGHT-CODE",
+    tags: ["TypeScript", "Utilities"],
+    description: "A collection of late-night coding experiments and experimental scripts.",
+    href: "https://github.com/RISHII7/night-code",
   },
 ];
-
-export const labFooterLink = {
-  label: "ALL CODE · GITHUB.COM/RISHII7",
-  href: "https://github.com/RISHII7?tab=repositories",
-} as const;
