@@ -102,8 +102,12 @@ export function drawDitheredPortrait(
 
       if (eraser < 0.05) continue; // skipped
 
-      // contrast boost so facial planes separate cleanly when dithered
-      const lum = Math.min(1, Math.max(0, (raw - 0.5) * 1.6 + 0.56));
+      // contrast boost so facial planes separate cleanly when dithered, with
+      // a soft knee above 0.6 so bright highlights (skin, fabric) keep dot
+      // texture instead of clamping into a solid block
+      const linear = (raw - 0.5) * 1.6 + 0.56;
+      const knee = 0.6;
+      const lum = Math.max(0, linear <= knee ? linear : knee + (linear - knee) * 0.12);
       // true blacks stay empty — the face pops against the dark field
       if (lum < 0.16) continue;
       // dissolve toward both crop edges
@@ -174,8 +178,12 @@ export function drawDitheredCard(
       const i = (y * w + x) * 4;
       if (px[i + 3] < 40) continue;
       const raw = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
-      // same contrast boost as the hero so facial planes separate crisply
-      const lum = Math.min(1, Math.max(0, (raw - 0.5) * 1.6 + 0.56));
+      // contrast boost for midtone separation, with a soft knee above 0.6 so
+      // bright regions (skin under flash, white fabric) keep dot texture
+      // instead of clamping to a solid block
+      const linear = (raw - 0.5) * 1.6 + 0.56;
+      const knee = 0.6;
+      const lum = Math.max(0, linear <= knee ? linear : knee + (linear - knee) * 0.12);
       if (lum < 0.14) continue; // true blacks stay empty
       const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
       if (lum * 1.1 < threshold * 0.95) continue;
