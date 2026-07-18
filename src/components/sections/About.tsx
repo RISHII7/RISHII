@@ -11,7 +11,7 @@ import {
 import { MarqueeTitle, SectionEyebrow, SectionFrame } from "../ui/SectionShell";
 import { BrandIcon } from "../ui/BrandIcon";
 import Tilt from "react-parallax-tilt";
-import { drawHalftonePortrait, loadImage } from "../../lib/dither";
+import { drawDitheredCard, loadImage } from "../../lib/dither";
 
 /** Interactive 3D Holographic Card of the User's Portrait */
 function HoloPortraitCard() {
@@ -29,7 +29,7 @@ function HoloPortraitCard() {
       
       loadImage(about.photo).then((img) => {
         raf = requestAnimationFrame(() => {
-          drawHalftonePortrait(canvas, img, "#ece9e4", 5, 0.25, 0.5);
+          drawDitheredCard(canvas, img, { anchorX: 0.25, anchorY: 0.5 });
         });
       });
     });
@@ -59,7 +59,7 @@ function HoloPortraitCard() {
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-card)] border border-muted/15 bg-ink">
         <canvas
           ref={canvasRef}
-          className="h-full w-full object-cover opacity-90 mix-blend-screen"
+          className="h-full w-full object-cover [image-rendering:pixelated]"
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(195,255,252,0.1)_0%,transparent_70%)] mix-blend-overlay pointer-events-none" />
       </div>
