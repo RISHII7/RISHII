@@ -27,5 +27,13 @@ export default defineConfig({
         "/projects/fizzie",
       ],
     }),
+    {
+      name: "force-exit-plugin",
+      closeBundle() {
+        // vite-prerender-plugin hangs the process after completion
+        // Force exit to prevent CI/CD pipelines from timing out
+        setTimeout(() => process.exit(0), 100);
+      }
+    }
   ],
 });
