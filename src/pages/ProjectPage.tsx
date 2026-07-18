@@ -39,7 +39,7 @@ export default function ProjectPage() {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // per-route SEO: title + description for this case study, restored on leave
+  // per-route SEO: title, description, canonical, OG, and structured data
   useEffect(() => {
     if (!project) return;
     const prevTitle = document.title;
@@ -47,11 +47,54 @@ export default function ProjectPage() {
     const prevDesc = meta?.content ?? "";
     document.title = `${project.title} — ${project.category} case study · Rushikesh Palande`;
     if (meta) meta.content = project.description;
+
+    // Dynamic canonical URL
+    const pageUrl = `https://rishii-two.vercel.app${basePath}/${project.slug}`;
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    const prevCanonical = canonical?.href ?? "";
+    if (canonical) canonical.href = pageUrl;
+
+    // Dynamic og:url
+    const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    const prevOgUrl = ogUrl?.content ?? "";
+    if (ogUrl) ogUrl.content = pageUrl;
+
+    // Dynamic og:title & og:description
+    const ogTitle = document.querySelector<HTMLMetaElement>('meta[property="og:title"]');
+    const prevOgTitle = ogTitle?.content ?? "";
+    if (ogTitle) ogTitle.content = `${project.title} — ${project.category} case study · Rushikesh Palande`;
+
+    const ogDesc = document.querySelector<HTMLMetaElement>('meta[property="og:description"]');
+    const prevOgDesc = ogDesc?.content ?? "";
+    if (ogDesc) ogDesc.content = project.description;
+
+    // Inject BreadcrumbList JSON-LD
+    const breadcrumb = document.createElement("script");
+    breadcrumb.type = "application/ld+json";
+    breadcrumb.id = "breadcrumb-ld";
+    const sectionLabel = inFeatured ? "Work" : "Projects";
+    breadcrumb.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://rishii-two.vercel.app/" },
+        { "@type": "ListItem", position: 2, name: sectionLabel, item: `https://rishii-two.vercel.app/#${sectionLabel.toLowerCase()}` },
+        { "@type": "ListItem", position: 3, name: project.title },
+      ],
+    });
+    document.head.appendChild(breadcrumb);
+
     return () => {
       document.title = prevTitle;
       if (meta) meta.content = prevDesc;
+      if (canonical) canonical.href = prevCanonical;
+      if (ogUrl) ogUrl.content = prevOgUrl;
+      if (ogTitle) ogTitle.content = prevOgTitle;
+      if (ogDesc) ogDesc.content = prevOgDesc;
+      const existing = document.getElementById("breadcrumb-ld");
+      if (existing) existing.remove();
     };
-  }, [project]);
+  }, [project, basePath, inFeatured]);
 
   if (!project || !next) {
     return (

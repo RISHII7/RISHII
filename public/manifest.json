@@ -1,0 +1,29 @@
+{
+  "name": "Rushikesh Palande — Portfolio",
+  "short_name": "RISHII",
+  "description": "Software Engineer building full-stack SaaS, real-time systems, and AI-powered applications.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#0e0e0e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "categories": ["portfolio", "technology"],
+  "lang": "en",
+  "dir": "ltr"
+}
