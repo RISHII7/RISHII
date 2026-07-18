@@ -17,15 +17,15 @@ export function Footer() {
           </a>
         </div>
 
-        <div className="mt-16 flex items-end justify-between pb-6">
+        <div className="mt-12 flex flex-col gap-4 pb-6 sm:mt-16 sm:flex-row sm:items-end sm:justify-between">
           <span
             aria-hidden="true"
-            className="font-sans text-[clamp(2.5rem,6vw,5rem)] font-black leading-none tracking-[-0.04em]"
+            className="font-sans text-[clamp(3rem,13vw,5rem)] font-black leading-none tracking-[-0.04em]"
           >
             <span className="text-muted">R</span>
             <span className="text-accent">P</span>
           </span>
-          <span className="hud-label text-muted/60">
+          <span className="hud-label text-muted/60 sm:text-right">
             © {site.year} {site.name.toUpperCase()}. ALL RIGHTS RESERVED.
           </span>
         </div>

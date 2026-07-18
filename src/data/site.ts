@@ -1,7 +1,7 @@
 export const site = {
   name: "Rushikesh Palande",
   handle: "RISHII7",
-  url: "https://rushikeshpalande.com",
+  url: "https://rishii-two.vercel.app",
   email: "rishikeshx1006@gmail.com",
   linkedin: "https://www.linkedin.com/in/rushikesh07",
   github: "https://github.com/RISHII7",

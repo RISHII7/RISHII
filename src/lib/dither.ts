@@ -118,6 +118,74 @@ export function drawDitheredPortrait(
 }
 
 /**
+ * Crisp ordered-dither portrait that FILLS a contained card (About section)
+ * — same fine 1px Bayer look as the hero, no edge fade. The whole photo is
+ * cover-fit into the card; `anchorX`/`anchorY` (0–1) keep the face framed,
+ * and the canvas should carry `image-rendering: pixelated`.
+ */
+export function drawDitheredCard(
+  canvas: HTMLCanvasElement,
+  img: HTMLImageElement,
+  opts: {
+    anchorX?: number;
+    anchorY?: number;
+    res?: number;
+    shades?: [string, string, string];
+  } = {},
+): void {
+  const {
+    anchorX = 0.5,
+    anchorY = 0.18,
+    res = 340,
+    shades = ["#ece9e4", "#9d9a95", "#4a4a47"],
+  } = opts;
+
+  const rect = canvas.getBoundingClientRect();
+  const aspect = rect.width > 0 && rect.height > 0 ? rect.width / rect.height : 0.8;
+  const w = res;
+  const h = Math.max(1, Math.round(res / aspect));
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  const off = document.createElement("canvas");
+  off.width = w;
+  off.height = h;
+  const octx = off.getContext("2d");
+  if (!octx) return;
+
+  // cover-fit the whole photo, framed by the anchors
+  const scale = Math.max(w / img.width, h / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  const dx = (w - dw) * anchorX;
+  const dy = (h - dh) * anchorY;
+  octx.filter = "blur(0.4px)";
+  octx.drawImage(img, dx, dy, dw, dh);
+
+  const px = octx.getImageData(0, 0, w, h).data;
+  ctx.clearRect(0, 0, w, h);
+  const [light, mid, dark] = shades;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      if (px[i + 3] < 40) continue;
+      const raw = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      // same contrast boost as the hero so facial planes separate crisply
+      const lum = Math.min(1, Math.max(0, (raw - 0.5) * 1.6 + 0.56));
+      if (lum < 0.14) continue; // true blacks stay empty
+      const threshold = (BAYER_4[y % 4][x % 4] + 0.5) / 16;
+      if (lum * 1.1 < threshold * 0.95) continue;
+      ctx.fillStyle = lum > 0.7 ? light : lum > 0.42 ? mid : dark;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
+/**
  * Whole-photo ordered dither, cover-fit across the entire canvas (the
  * "mobile look"): bright checkerboard rendering of the full scene, face
  * kept in frame via `faceX` (image-width fraction) anchored to `anchorX`.
