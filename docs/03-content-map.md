@@ -30,7 +30,7 @@ Screenshots: `public/images/projects/{ghost-ai,echo,nodebase}.png`.
 
 ## 02 More Projects — REAL DATA (`src/data/moreProjects.ts`)
 
-Six ledger rows, each opening `/projects/:slug` case-study pages (same template):
+Seven ledger rows, each opening `/projects/:slug` case-study pages (same template):
 
 1. **ROOMIFY** — AI Visualization — 2D floor plans → photorealistic 3D renders, fully serverless (Puter, Gemini)
 2. **NIMBUS** — 3D Product Experience — PBR keyboard scenes, GSAP scroll cinematography, Prismic slices
@@ -38,12 +38,15 @@ Six ledger rows, each opening `/projects/:slug` case-study pages (same template)
 4. **SENDKIT** — Developer Tooling — SDK + CLI + MCP messaging toolkit, on npm
 5. **ZENBREW** — Brand Experience — coffee-house brand site, GSAP + Framer Motion
 6. **FIZZIE** — Beverage Brand — "Fizzi, Soda for Gutsy People" premium health-soda brand site, shoppable flavor carousel, Prismic-driven (Next.js, TS, Tailwind)
+7. **FLOWBROWSE** — Browser Automation — drag-and-drop workflow builder driving real Browserbase sessions via Trigger.dev, multiplayer canvas (Liveblocks), Clerk-billed Pro tier. Promoted here from Experiment Lab once it shipped a live product (owner call, 2026-07-31).
 
-Screenshots for all six in `public/images/projects/`.
+Screenshots for all seven in `public/images/projects/`.
 
-## 03 Experiment Lab — ⚠ PLACEHOLDERS
+## 03 Experiment Lab — REAL DATA (`src/data/lab.ts`)
 
-Three open-source slots with tech tags + repo links. Owner to pick. Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
+One open-source slot with tech tags + repo link (Flowbrowse promoted out to More Projects once deployed). Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
+
+1. **NIGHT-CODE** — terminal-native AI coding agent on NVIDIA's free models, PLAN/BUILD modes, sandboxed, zero-cost
 
 ## 04 About / Career
 

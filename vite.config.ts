@@ -4,8 +4,18 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
+import { featuredWork } from "./src/data/featuredWork";
+import { moreProjects } from "./src/data/moreProjects";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Derived from the data files so every case-study page is always
+// statically prerendered — adding a project here never needs a second edit.
+const prerenderRoutes = [
+  "/",
+  ...featuredWork.map((p) => `/work/${p.slug}`),
+  ...moreProjects.map((p) => `/projects/${p.slug}`),
+];
 
 export default defineConfig({
   plugins: [
@@ -14,18 +24,7 @@ export default defineConfig({
     vitePrerenderPlugin({
       renderTarget: "#root",
       prerenderScript: path.resolve(__dirname, "src/prerender.tsx"),
-      additionalPrerenderRoutes: [
-        "/",
-        "/work/ghost-ai",
-        "/work/echo",
-        "/work/nodebase",
-        "/projects/roomify",
-        "/projects/nimbus",
-        "/projects/apple-macbook",
-        "/projects/sendkit",
-        "/projects/zenbrew",
-        "/projects/fizzie",
-      ],
+      additionalPrerenderRoutes: prerenderRoutes,
     }),
     {
       name: "force-exit-plugin",

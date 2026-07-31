@@ -183,4 +183,34 @@ export const moreProjects: FeaturedProject[] = [
       ],
     },
   },
+  {
+    number: "007",
+    slug: "flowbrowse",
+    title: "FLOWBROWSE",
+    category: "Browser Automation",
+    description:
+      "A drag-and-drop workflow builder that turns a node graph into a durable, observable background job driving a real browser — no code required",
+    tags: ["Next.js 16", "React Flow", "Trigger.dev", "Browserbase", "Liveblocks"],
+    metrics: [
+      { value: "6", label: "node types: URL · Act · Extract · Agent…" },
+      { value: "213", label: "commits, actively developed" },
+      { value: "REALTIME", label: "multiplayer canvas + live run console" },
+    ],
+    image: "/images/projects/flowbrowse.png",
+    href: "https://flowbrowse.vercel.app",
+    github: "https://github.com/RISHII7/Flowbrowse",
+    detail: {
+      role: "SOLO BUILD — FULL PLATFORM",
+      timeline: "SHIPPED · ACTIVELY MAINTAINED",
+      scope: ["Canvas editor", "Browser automation engine", "Multiplayer", "Observability"],
+      summary:
+        "Wire nodes together on a canvas — open a page, click something, extract data, run an autonomous agent, send an email — and Flowbrowse turns that graph into a durable background job driving a real, recorded browser session.",
+      pullquote: "No-code automation that's actually observable: every run is a real browser you can watch.",
+      body: [
+        "The canvas is a React Flow graph with six node types — Open URL, Act, Extract, Observe, Agent, and Send Email — validated against missing triggers, disconnected graphs, and cycles before it ever runs. Multiple people can edit the same workflow at once: Liveblocks drives live cursors, presence, and avatars across the team.",
+        "Execution is real, not simulated: Stagehand drives an actual browser session through Browserbase, orchestrated as a durable Trigger.dev task that walks the graph node by node with live status streamed back to a run console — step-by-step logs, formatted JSON output, and, on the Pro tier, full session-replay recordings as HLS streams.",
+        "Built for teams, not just solo scripts: Clerk organizations scope every workflow, Clerk Billing gates Pro features like the Agent node and replay, Neon Postgres with Drizzle stores graphs and run history, and Sentry covers errors and tracing across both the Next.js app and the Trigger.dev runtime.",
+      ],
+    },
+  },
 ];
