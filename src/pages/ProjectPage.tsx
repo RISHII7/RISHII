@@ -68,6 +68,37 @@ export default function ProjectPage() {
     const prevOgDesc = ogDesc?.content ?? "";
     if (ogDesc) ogDesc.content = project.description;
 
+    // Dynamic image + Twitter card — falls back to the default og.jpg when a
+    // project has no screenshot yet
+    const imageUrl = project.image
+      ? `https://rishii-two.vercel.app${project.image}`
+      : "https://rishii-two.vercel.app/og.jpg";
+    const imageAlt = `${project.title} — screenshot`;
+
+    const ogImage = document.querySelector<HTMLMetaElement>('meta[property="og:image"]');
+    const prevOgImage = ogImage?.content ?? "";
+    if (ogImage) ogImage.content = imageUrl;
+
+    const ogImageAlt = document.querySelector<HTMLMetaElement>('meta[property="og:image:alt"]');
+    const prevOgImageAlt = ogImageAlt?.content ?? "";
+    if (ogImageAlt) ogImageAlt.content = imageAlt;
+
+    const twitterTitle = document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]');
+    const prevTwitterTitle = twitterTitle?.content ?? "";
+    if (twitterTitle) twitterTitle.content = `${project.title} — ${project.category} case study`;
+
+    const twitterDesc = document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]');
+    const prevTwitterDesc = twitterDesc?.content ?? "";
+    if (twitterDesc) twitterDesc.content = project.description;
+
+    const twitterImage = document.querySelector<HTMLMetaElement>('meta[name="twitter:image"]');
+    const prevTwitterImage = twitterImage?.content ?? "";
+    if (twitterImage) twitterImage.content = imageUrl;
+
+    const twitterImageAlt = document.querySelector<HTMLMetaElement>('meta[name="twitter:image:alt"]');
+    const prevTwitterImageAlt = twitterImageAlt?.content ?? "";
+    if (twitterImageAlt) twitterImageAlt.content = imageAlt;
+
     // Inject BreadcrumbList JSON-LD
     const breadcrumb = document.createElement("script");
     breadcrumb.type = "application/ld+json";
@@ -91,6 +122,12 @@ export default function ProjectPage() {
       if (ogUrl) ogUrl.content = prevOgUrl;
       if (ogTitle) ogTitle.content = prevOgTitle;
       if (ogDesc) ogDesc.content = prevOgDesc;
+      if (ogImage) ogImage.content = prevOgImage;
+      if (ogImageAlt) ogImageAlt.content = prevOgImageAlt;
+      if (twitterTitle) twitterTitle.content = prevTwitterTitle;
+      if (twitterDesc) twitterDesc.content = prevTwitterDesc;
+      if (twitterImage) twitterImage.content = prevTwitterImage;
+      if (twitterImageAlt) twitterImageAlt.content = prevTwitterImageAlt;
       const existing = document.getElementById("breadcrumb-ld");
       if (existing) existing.remove();
     };

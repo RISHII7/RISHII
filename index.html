@@ -3,11 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rushikesh Palande — Software Engineer · Full-Stack & AI Systems</title>
-    <meta
-      name="description"
-      content="Rushikesh Palande is a Software Engineer in Pune/Noida, India building full-stack SaaS, real-time systems, and AI-powered applications. 2 years shipping SaaS. Open to remote work."
-    />
+    <!--
+      Route-specific tags (title, description, canonical, og:*, twitter:*)
+      are intentionally NOT here — the prerender plugin only appends head
+      elements to the end of <head>, it doesn't replace existing ones, so a
+      static tag here would always win over a per-route one (crawlers read
+      first-match-in-document-order). Every route — including "/" — gets
+      its title/description/canonical/OG/Twitter tags injected by
+      src/prerender.tsx instead, so there's exactly one correct copy per
+      page in the actual static HTML crawlers and link-unfurl bots read.
+    -->
     <meta name="author" content="Rushikesh Palande" />
     <meta name="google-site-verification" content="ozoKn1YFGDbvf3IuWz0u8a1VegaRzt0poShNlh5UqBc" />
     <meta
@@ -18,7 +23,6 @@
     <meta name="theme-color" content="#0e0e0e" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="color-scheme" content="dark" />
-    <link rel="canonical" href="https://rishii-two.vercel.app/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
@@ -28,31 +32,11 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com" />
     <link rel="dns-prefetch" href="//fonts.gstatic.com" />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Twitter properties that never vary by route -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rushikesh Palande — Portfolio" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:url" content="https://rishii-two.vercel.app/" />
-    <meta property="og:title" content="Rushikesh Palande — Software Engineer · Full-Stack & AI Systems" />
-    <meta
-      property="og:description"
-      content="Software Engineer building full-stack SaaS, real-time systems, and AI-powered applications. 2 years shipping SaaS. Based in Pune/Noida, India — open to remote work."
-    />
-    <meta property="og:image" content="https://rishii-two.vercel.app/og.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:alt" content="Rushikesh Palande — Software Engineer portfolio hero showing name and specializations" />
-
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Rushikesh Palande — Software Engineer · Full-Stack & AI Systems" />
-    <meta
-      name="twitter:description"
-      content="Full-stack SaaS, real-time systems, and AI-powered applications. Open to remote work."
-    />
-    <meta name="twitter:image" content="https://rishii-two.vercel.app/og.jpg" />
-    <meta name="twitter:image:alt" content="Rushikesh Palande — Software Engineer portfolio" />
 
     <!-- Structured data: Person -->
     <script type="application/ld+json">
@@ -153,9 +137,11 @@
         <ul>
           <li><strong>ROOMIFY</strong> — AI-powered 2D-to-3D architectural visualization</li>
           <li><strong>NIMBUS</strong> — Premium 3D mechanical keyboard showcase</li>
+          <li><strong>APPLE MACBOOK</strong> — Apple-style 3D product showcase</li>
           <li><strong>SENDKIT</strong> — Unified messaging SDK, CLI & MCP server</li>
           <li><strong>ZENBREW</strong> — Premium coffee-house brand experience</li>
           <li><strong>FIZZIE</strong> — "Soda for Gutsy People" beverage brand site</li>
+          <li><strong>FLOWBROWSE</strong> — No-code browser-automation workflow builder</li>
         </ul>
         <h2>Contact</h2>
         <p>Email: <a href="mailto:rishikeshx1006@gmail.com" style="color:#c3fffc">rishikeshx1006@gmail.com</a></p>
