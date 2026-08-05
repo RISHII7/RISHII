@@ -9,7 +9,7 @@ import { Hero } from "../components/sections/Hero";
 import { TechBand } from "../components/sections/TechBand";
 import { FeaturedWork } from "../components/sections/FeaturedWork";
 import { MoreProjects } from "../components/sections/MoreProjects";
-import { Lab } from "../components/sections/Lab";
+import { DataEngineering } from "../components/sections/DataEngineering";
 import { About } from "../components/sections/About";
 import { Contact } from "../components/sections/Contact";
 
@@ -37,7 +37,7 @@ export default function Home() {
         <TechBand />
         <FeaturedWork />
         <MoreProjects />
-        <Lab />
+        <DataEngineering />
         <About />
         <Contact />
       </main>

@@ -6,6 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { vitePrerenderPlugin } from "vite-prerender-plugin";
 import { featuredWork } from "./src/data/featuredWork";
 import { moreProjects } from "./src/data/moreProjects";
+import { dataEngineering } from "./src/data/dataEngineering";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -15,6 +16,7 @@ const prerenderRoutes = [
   "/",
   ...featuredWork.map((p) => `/work/${p.slug}`),
   ...moreProjects.map((p) => `/projects/${p.slug}`),
+  ...dataEngineering.map((p) => `/data/${p.slug}`),
 ];
 
 export default defineConfig({

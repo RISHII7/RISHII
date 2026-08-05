@@ -3,6 +3,14 @@ import { StaticRouter } from "react-router";
 import App from "./App";
 import { featuredWork } from "./data/featuredWork";
 import { moreProjects } from "./data/moreProjects";
+import { dataEngineering } from "./data/dataEngineering";
+
+/** One entry per case-study collection — mirrors ProjectPage.tsx's COLLECTIONS. */
+const COLLECTIONS = [
+  { basePath: "work", items: featuredWork },
+  { basePath: "projects", items: moreProjects },
+  { basePath: "data", items: dataEngineering },
+] as const;
 
 // vite-prerender-plugin defines these shapes internally but only re-exports
 // PrerenderArguments/PrerenderResult from its public entry point — mirrored
@@ -37,17 +45,21 @@ function meta(props: Record<string, string>): HeadElement {
 function headFor(url: string): Partial<Head> {
   const path = url.split("?")[0].split("#")[0];
 
-  const workMatch = path.match(/^\/work\/([^/]+)/);
-  const projectMatch = path.match(/^\/projects\/([^/]+)/);
-  const project = workMatch
-    ? featuredWork.find((p) => p.slug === workMatch[1])
-    : projectMatch
-      ? moreProjects.find((p) => p.slug === projectMatch[1])
-      : undefined;
+  let project: (typeof featuredWork)[number] | undefined;
+  let basePath = "";
+  for (const c of COLLECTIONS) {
+    const m = path.match(new RegExp(`^/${c.basePath}/([^/]+)`));
+    if (m) {
+      const found = c.items.find((p) => p.slug === m[1]);
+      if (found) {
+        project = found;
+        basePath = c.basePath;
+        break;
+      }
+    }
+  }
 
-  const canonical = project
-    ? `${SITE_URL}/${workMatch ? "work" : "projects"}/${project.slug}`
-    : `${SITE_URL}/`;
+  const canonical = project ? `${SITE_URL}/${basePath}/${project.slug}` : `${SITE_URL}/`;
 
   const title = project
     ? `${project.title} — ${project.category} case study · Rushikesh Palande`

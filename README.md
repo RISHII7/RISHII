@@ -43,12 +43,12 @@ Oversized display typography, mono microlabels, live scroll/cursor telemetry, a 
 
 ## Features
 
-- **Nine real case studies**, each with its own route, own SEO title/description, and copy sourced from the actual repo — no lorem ipsum
+- **Eleven real case studies**, each with its own route, own SEO title/description, and copy sourced from the actual repo — no lorem ipsum
 - **Canvas-rendered portrait art** — an ordered (Bayer) dither run client-side against the profile photo, no pre-baked image asset, contrast-tuned per breakpoint
 - **Live HUD chrome** — scroll-progress and cursor-position readouts, an accent-color cycler, a real-time clock, all updated every frame
 - **Scramble-decode text** on the boot sequence and section titles, staggered reveal timed to the preloader's exit
 - **Perpetual marquee headlines** that drift on their own and pick up momentum from scroll, never fully stopping
-- **Prerendered routes** — all 10 pages (home + 9 case studies) are statically generated at build time for instant paint and full crawlability
+- **Prerendered routes** — all 12 pages (home + 11 case studies) are statically generated at build time, with route-specific title/description/canonical/OG/Twitter tags baked into the static HTML — not just client-patched — so crawlers and link-unfurl bots see the real page, not generic homepage metadata
 - **Reduced-motion aware** throughout; every animation has a static fallback
 
 ## Tech stack
@@ -79,9 +79,10 @@ npm run preview      # preview the prerendered build
 
 | Path | Renders |
 | --- | --- |
-| `/` | Hero · Tech band · Work · Projects · Lab · About · Contact |
+| `/` | Hero · Tech band · Work · Projects · Data Engineering · About · Contact |
 | `/work/:slug` | Featured-work case studies — `ghost-ai` · `echo` · `nodebase` |
-| `/projects/:slug` | More-project case studies — `roomify` · `nimbus` · `apple-macbook` · `sendkit` · `zenbrew` · `fizzie` |
+| `/projects/:slug` | More-project case studies — `roomify` · `nimbus` · `apple-macbook` · `sendkit` · `zenbrew` · `fizzie` · `flowbrowse` |
+| `/data/:slug` | Data-engineering case studies — `walmart` |
 
 ## Project documentation
 
