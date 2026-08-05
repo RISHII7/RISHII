@@ -3,6 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { featuredWork } from "../data/featuredWork";
 import { moreProjects } from "../data/moreProjects";
+import { dataEngineering } from "../data/dataEngineering";
+
+/** One entry per case-study collection: base path, section anchor, nav label. */
+const COLLECTIONS = [
+  { basePath: "/work", section: "work", label: "Work", items: featuredWork },
+  { basePath: "/projects", section: "projects", label: "Projects", items: moreProjects },
+  { basePath: "/data", section: "data", label: "Data", items: dataEngineering },
+] as const;
 import { Header } from "../components/layout/Header";
 import { StatusBar, EdgeLines } from "../components/layout/StatusBar";
 import { Footer } from "../components/layout/Footer";
@@ -23,17 +31,14 @@ export default function ProjectPage() {
   const { slug } = useParams();
 
   // find the project in its collection; next cycles within that collection
-  const fwIdx = featuredWork.findIndex((p) => p.slug === slug);
-  const mpIdx = moreProjects.findIndex((p) => p.slug === slug);
-  const inFeatured = fwIdx >= 0;
-  const collection = inFeatured ? featuredWork : moreProjects;
-  const idx = inFeatured ? fwIdx : mpIdx;
-  const project = idx >= 0 ? collection[idx] : null;
-  const next = idx >= 0 ? collection[(idx + 1) % collection.length] : null;
-  const basePath = inFeatured ? "/work" : "/projects";
-  const backHref = inFeatured ? "/#work" : "/#projects";
-  const backLabel = inFeatured ? "← ALL WORK" : "← ALL PROJECTS";
-  const activeSection = inFeatured ? "work" : "projects";
+  const match = COLLECTIONS.map((c) => ({ ...c, idx: c.items.findIndex((p) => p.slug === slug) }))
+    .find((c) => c.idx >= 0);
+  const project = match ? match.items[match.idx] : null;
+  const next = match ? match.items[(match.idx + 1) % match.items.length] : null;
+  const basePath = match?.basePath ?? "/work";
+  const backHref = match ? `/#${match.section}` : "/#work";
+  const backLabel = match ? `← ALL ${match.label.toUpperCase()}` : "← HOME";
+  const activeSection = match?.section ?? "work";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -103,7 +108,7 @@ export default function ProjectPage() {
     const breadcrumb = document.createElement("script");
     breadcrumb.type = "application/ld+json";
     breadcrumb.id = "breadcrumb-ld";
-    const sectionLabel = inFeatured ? "Work" : "Projects";
+    const sectionLabel = match?.label ?? "Work";
     breadcrumb.textContent = JSON.stringify({
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
@@ -131,7 +136,7 @@ export default function ProjectPage() {
       const existing = document.getElementById("breadcrumb-ld");
       if (existing) existing.remove();
     };
-  }, [project, basePath, inFeatured]);
+  }, [project, basePath, match?.label]);
 
   if (!project || !next) {
     return (

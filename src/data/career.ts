@@ -93,6 +93,9 @@ export const toolkit: Tool[] = [
   { slug: "docker", name: "DOCKER", role: "DEPLOYMENT" },
   { slug: "claude", name: "CLAUDE", role: "AI DEVELOPMENT" },
   { slug: "linux", name: "LINUX", role: "ENVIRONMENT" },
+  { slug: "databricks", name: "DATABRICKS", role: "LAKEHOUSE" },
+  { slug: "sql", name: "SQL", role: "QUERY LANGUAGE" },
+  { slug: "redis", name: "REDIS", role: "CACHE / BROKER" },
 ];
 
 /** Off-white marquee band under the hero. */

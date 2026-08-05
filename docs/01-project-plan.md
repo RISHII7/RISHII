@@ -12,10 +12,12 @@ A dark, editorial, type-driven portfolio that feels engineered rather than templ
 | --- | --- |
 | Tech stack | React 19 + Vite 7 + Tailwind CSS v4 + TypeScript + React Router 7 |
 | Font | Rubik Variable (self-hosted via @fontsource-variable) |
-| Page shape | Single page, five numbered sections + case-study routes (`/work/:slug`, `/projects/:slug`) |
+| Page shape | Single page, five numbered sections + case-study routes (`/work/:slug`, `/projects/:slug`, `/data/:slug`) |
+| Live URL | `https://rishii-two.vercel.app` (free Vercel subdomain, no custom domain purchased) |
 | Featured Work | GHOST-AI · ECHO · NODEBASE (3 cards, owner-curated) |
-| More Projects | ROOMIFY · NIMBUS · APPLE MACBOOK · SENDKIT · ZENBREW · FIZZIE |
-| Project images | Real screenshots in `public/images/projects/` |
+| More Projects | ROOMIFY · NIMBUS · APPLE MACBOOK · SENDKIT · ZENBREW · FIZZIE · FLOWBROWSE |
+| Data Engineering | WALMART DATA PLATFORM — section rebranded from "Experiment Lab" (2026-08-05); Night-Code dropped, didn't fit the theme |
+| Project images | Real screenshots in `public/images/projects/` where available; data-engineering entries are text-only by owner's choice |
 | Dates on project cards | **None** — cards lead with tech and outcomes, not timelines |
 | Contact email | `rishikeshx1006@gmail.com` |
 
@@ -26,18 +28,18 @@ A dark, editorial, type-driven portfolio that feels engineered rather than templ
 3. ✅ Documentation set created and maintained
 4. ✅ Project scaffolded (Vite + React 19 + TS + Tailwind v4)
 5. ✅ Design tokens + base styles implemented
-6. ✅ All sections built: Preloader → Hero → Tech band → 01 Work → 02 Projects → 03 Lab → 04 About → 05 Contact
-7. ✅ Case-study pages for all 9 projects (routing, per-page SEO titles)
-8. ✅ SEO layer — meta, OG, JSON-LD (Person + WebSite), sitemap with all routes, robots, per-route titles, Vercel SPA rewrites
-9. ✅ Real project data + screenshots (work + more projects)
-10. ✅ Quality gates — ESLint (flat config, TS + react-hooks), typecheck, production build all green
-11. ⬜ Experiment Lab real data (3 slots — owner to pick)
-12. ⬜ Release v1.0.0 (`develop` → `main` PR #9, tag) and deploy to Vercel
-13. ⬜ Custom domain + Google Search Console submission
+6. ✅ All sections built: Preloader → Hero → Tech band → 01 Work → 02 Projects → 03 Data Engineering → 04 About → 05 Contact
+7. ✅ Case-study pages for all projects across three collections (routing, per-page SEO)
+8. ✅ SEO layer — meta, OG, JSON-LD (Person + WebSite + ProfilePage), sitemap with all routes, robots, Vercel SPA rewrites
+9. ✅ Per-route SEO tags baked into static HTML at build time via `prerender.tsx` — not just client-patched, so crawlers/link-unfurl bots see correct route-specific title/description/canonical/OG/Twitter
+10. ✅ Real project data + screenshots across Work, Projects, and Data Engineering
+11. ✅ Quality gates — ESLint (flat config, TS + react-hooks), typecheck, production build all green
+12. ✅ Released to `main`, deployed to Vercel at `rishii-two.vercel.app`
+13. ✅ Google Search Console: property verified, sitemap submitted, homepage indexed
+14. ✅ GitHub profile README (`RISHII7/RISHII7`) updated with a portfolio spotlight + corrected project cards
+15. ⬜ Custom domain (optional — currently on the free Vercel subdomain; a custom domain would strengthen name-search ranking further)
 
-## Open items (waiting on owner)
+## Open items (owner's call, not blocking)
 
-- [ ] Experiment Lab picks (3 open-source repos)
-- [ ] Merge release PR #9 → tag v1.0.0 → deploy
-- [ ] Buy custom domain (canonical currently `rushikeshpalande.com` — update `index.html`, `sitemap.xml`, `robots.txt`, `src/data/site.ts` if the domain differs)
-- [ ] After deploy: submit sitemap in Google Search Console; set site URL on GitHub + LinkedIn profiles
+- [ ] Custom domain purchase — if bought, update canonical/OG URLs in `index.html`, `src/prerender.tsx`, `public/sitemap.xml`, `public/robots.txt`, `src/data/site.ts`
+- [ ] Old portfolio (`rushikesh-indol.vercel.app`) still competes with this site in search results for the owner's name — a 301 redirect to `rishii-two.vercel.app` would consolidate ranking authority, pending owner access/confirmation

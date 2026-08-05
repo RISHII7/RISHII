@@ -42,11 +42,11 @@ Seven ledger rows, each opening `/projects/:slug` case-study pages (same templat
 
 Screenshots for all seven in `public/images/projects/`.
 
-## 03 Experiment Lab — REAL DATA (`src/data/lab.ts`)
+## 03 Data Engineering — REAL DATA (`src/data/dataEngineering.ts`)
 
-One open-source slot with tech tags + repo link (Flowbrowse promoted out to More Projects once deployed). Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
+Rebranded from "Experiment Lab" (owner call, 2026-08-05) — Night-Code was dropped (didn't fit a data-engineering theme; Flowbrowse had already moved out to More Projects). Full case-study treatment (`/data/:slug`) like Work/Projects, no screenshot by owner's choice. Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
 
-1. **NIGHT-CODE** — terminal-native AI coding agent on NVIDIA's free models, PLAN/BUILD modes, sandboxed, zero-cost
+1. **WALMART DATA PLATFORM** — medallion architecture (bronze/silver/gold) on Databricks + Unity Catalog, dbt incremental models with SCD Type 2 snapshots, orchestrated by a containerized Airflow DAG on Celery (dbt, Airflow, Databricks, Unity Catalog, PostgreSQL)
 
 ## 04 About / Career
 
@@ -67,7 +67,7 @@ One open-source slot with tech tags + repo link (Flowbrowse promoted out to More
 
 **Core foundations (4):** 01 Systems over screens · 02 Ship end-to-end · 03 Real-time first · 04 Hardware to browser
 
-**Toolkit:** VS Code, Claude, React, Node.js, Python, PostgreSQL, Docker, AWS, Figma, Linux
+**Toolkit** (`src/data/career.ts`): React, Node.js, TypeScript, Python, PostgreSQL, Docker, Claude, Linux, Databricks, SQL, Redis — SQL has no brand icon in simple-icons (it's a language spec, not a product), so `BrandIcon` renders a text-monogram fallback for it instead of an empty slot. AWS was considered but simple-icons has no AWS entry at all in this package version; skipped rather than fake/blank it (owner call, 2026-08-05).
 
 **Resume:** `public/resume.pdf` (download link)
 

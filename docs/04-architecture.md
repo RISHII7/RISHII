@@ -37,15 +37,17 @@ Rushikesh_Palande/
 │   ├── App.tsx                # Routes + Lenis
 │   ├── pages/
 │   │   ├── Home.tsx           # Preloader + all five sections + chrome
-│   │   └── ProjectPage.tsx    # Case-study template (work + projects), per-route SEO
+│   │   └── ProjectPage.tsx    # Case-study template (work + projects + data), per-route SEO
+│   ├── prerender.tsx          # Build-time head generation: title/description/canonical/OG/
+│   │                          #   Twitter per route, baked into static HTML for every collection
 │   ├── styles/
 │   │   └── index.css          # Tailwind v4 @theme tokens + system chrome + fw-deck CSS
 │   ├── data/                  # ALL site content (typed)
 │   │   ├── site.ts            # Meta, nav, socials
 │   │   ├── profile.ts         # Hero, preloader, about, photo crops
 │   │   ├── featuredWork.ts    # Section 01 — 3 projects + case-study detail
-│   │   ├── moreProjects.ts    # Section 02 — 6 projects + case-study detail
-│   │   ├── lab.ts             # Section 03 — OSS slots
+│   │   ├── moreProjects.ts    # Section 02 — 7 projects + case-study detail
+│   │   ├── dataEngineering.ts # Section 03 — data-engineering projects + case-study detail
 │   │   └── career.ts          # Experience, education, foundations, competencies, toolkit, tech band
 │   ├── components/
 │   │   ├── layout/
@@ -56,9 +58,9 @@ Rushikesh_Palande/
 │   │   ├── sections/
 │   │   │   ├── Hero.tsx       # Dither canvases + cursor-weight name + scramble entrance
 │   │   │   ├── TechBand.tsx   # Off-white logo marquee
-│   │   │   ├── FeaturedWork.tsx  # Sticky card deck → /work/:slug
-│   │   │   ├── MoreProjects.tsx  # Ledger rows → /projects/:slug
-│   │   │   ├── Lab.tsx
+│   │   │   ├── FeaturedWork.tsx    # Sticky card deck → /work/:slug
+│   │   │   ├── MoreProjects.tsx    # Ledger rows → /projects/:slug
+│   │   │   ├── DataEngineering.tsx # Ledger rows → /data/:slug
 │   │   │   ├── About.tsx      # Halftone canvas, career ledgers, toolkit
 │   │   │   └── Contact.tsx
 │   │   └── ui/
@@ -72,7 +74,9 @@ Rushikesh_Palande/
 │   └── lib/
 │       ├── dither.ts          # Bayer dither portrait/cover/ambient/halftone helpers
 │       └── utils.ts           # cn() class helper
-├── index.html                 # SEO head: meta, OG, Twitter, Person + WebSite JSON-LD
+├── index.html                 # SEO head: only route-invariant tags (favicons, og:type/site_name/
+│                               #   locale, twitter:card, Person/WebSite/ProfilePage JSON-LD) —
+│                               #   everything route-varying comes from prerender.tsx instead
 ├── vercel.json                # SPA rewrites + asset cache headers
 ├── eslint.config.js
 ├── package.json               # dev/build/lint/typecheck/preview scripts
@@ -85,5 +89,6 @@ Rushikesh_Palande/
 - Components: PascalCase `.tsx`, one component per file, typed props.
 - Data files export `const` objects/arrays with exported TS interfaces (`FeaturedProject` is the shared project shape).
 - No CSS files per component — Tailwind utilities + tokens; bespoke effects live in `styles/index.css`.
-- Placeholder content is marked `// PLACEHOLDER — awaiting user` so it's greppable (only `lab.ts` remains).
-- Quality gates before merge: `npm run lint`, `npm run build` (tsc + vite) must pass.
+- No placeholder content remains — every section carries real, owner-sourced data.
+- Quality gates before merge: `npm run lint`, `npm run typecheck`, `npm run build` (tsc + vite + prerender) must pass.
+- Adding a project to any collection (`featuredWork.ts` / `moreProjects.ts` / `dataEngineering.ts`) is a one-file edit — `vite.config.ts` and `prerender.tsx` both derive their route lists from the data files, so a new slug is automatically prerendered with correct SEO tags without touching build config.
