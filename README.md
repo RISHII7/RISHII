@@ -43,7 +43,7 @@ Oversized display typography, mono microlabels, live scroll/cursor telemetry, a 
 
 ## Features
 
-- **Eleven real case studies**, each with its own route, own SEO title/description, and copy sourced from the actual repo — no lorem ipsum
+- **Twelve real case studies**, each with its own route, own SEO title/description, and copy sourced from the actual repo — no lorem ipsum
 - **Canvas-rendered portrait art** — an ordered (Bayer) dither run client-side against the profile photo, no pre-baked image asset, contrast-tuned per breakpoint
 - **Live HUD chrome** — scroll-progress and cursor-position readouts, an accent-color cycler, a real-time clock, all updated every frame
 - **Scramble-decode text** on the boot sequence and section titles, staggered reveal timed to the preloader's exit
@@ -82,7 +82,7 @@ npm run preview      # preview the prerendered build
 | `/` | Hero · Tech band · Work · Projects · Data Engineering · About · Contact |
 | `/work/:slug` | Featured-work case studies — `ghost-ai` · `echo` · `nodebase` |
 | `/projects/:slug` | More-project case studies — `roomify` · `nimbus` · `apple-macbook` · `sendkit` · `zenbrew` · `fizzie` · `flowbrowse` |
-| `/data/:slug` | Data-engineering case studies — `walmart` |
+| `/data/:slug` | Data-engineering case studies — `walmart` · `zomato-ai-analytics` |
 
 ## Project documentation
 

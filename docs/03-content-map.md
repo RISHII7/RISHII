@@ -44,9 +44,10 @@ Screenshots for all seven in `public/images/projects/`.
 
 ## 03 Data Engineering — REAL DATA (`src/data/dataEngineering.ts`)
 
-Rebranded from "Experiment Lab" (owner call, 2026-08-05) — Night-Code was dropped (didn't fit a data-engineering theme; Flowbrowse had already moved out to More Projects). Full case-study treatment (`/data/:slug`) like Work/Projects, no screenshot by owner's choice. Footer link: `ALL CODE · GITHUB.COM/RISHII7`.
+Rebranded from "Experiment Lab" (owner call, 2026-08-05) — Night-Code was dropped (didn't fit a data-engineering theme; Flowbrowse had already moved out to More Projects). Full case-study treatment (`/data/:slug`) like Work/Projects, no screenshot by owner's choice. No footer link (removed 2026-08-07, owner call).
 
 1. **WALMART DATA PLATFORM** — medallion architecture (bronze/silver/gold) on Databricks + Unity Catalog, dbt incremental models with SCD Type 2 snapshots, orchestrated by a containerized Airflow DAG on Celery (dbt, Airflow, Databricks, Unity Catalog, PostgreSQL)
+2. **ZOMATO AI ANALYTICS** — 33.6M-order Snowflake warehouse (medallion architecture, 17 dbt models), paired with Gemini-powered review enrichment, RAG search, and guarded text-to-SQL; STS role assumption instead of stored AWS credentials, 6-check CI gate (Snowflake, dbt, Airflow, Gemini AI, AWS S3)
 
 ## 04 About / Career
 
